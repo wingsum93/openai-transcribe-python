@@ -5,28 +5,28 @@ import sys
 import configparser
 
 # Function to split audio file into chunks less than 25MB
-def split_audio(file_path, chunk_size=24000000):  # chunk_size in bytes
+def split_audio_corrected(file_path, chunk_size=24000000):  # chunk_size in bytes
     data, samplerate = sf.read(file_path)
     total_bytes = data.nbytes
     num_chunks = total_bytes // chunk_size + (1 if total_bytes % chunk_size > 0 else 0)
-    sf.write(file_path.replace('.wav', '_chunk0.wav'), data[:chunk_size//2], samplerate)
+    sf.write(file_path.replace('.mp3', '_chunk0.mp3'), data[:chunk_size//2], samplerate)
     for i in range(1, num_chunks):
         start_idx = i * chunk_size//2
         end_idx = (i + 1) * chunk_size//2
-        sf.write(file_path.replace('.wav', f'_chunk{i}.wav'), data[start_idx:end_idx], samplerate)
+        sf.write(file_path.replace('.mp3', f'_chunk{i}.mp3'), data[start_idx:end_idx], samplerate)
 
 # Function to transcribe audio chunks
 def transcribe_chunks(file_path):
-    split_audio(file_path)
+    split_audio_corrected(file_path)
     transcripts = []
     for i in range(10):  # Assuming a maximum of 10 chunks to simplify
-        chunk_path = file_path.replace('.wav', f'_chunk{i}.wav')
+        chunk_path = file_path.replace('.mp3', f'_chunk{i}.mp3')
         try:
             with open(chunk_path, 'rb') as audio_file:
                 response = openai.Audio.create(
                     engine="davinci",
                     file=audio_file,
-                    mime_type="audio/wav"
+                    mime_type="audio/mp3"
                 )
                 transcripts.append(response['choices'][0]['text'])
         except FileNotFoundError:

@@ -1,84 +1,45 @@
-import sys
-import subprocess
+from pydub import AudioSegment
 import openai
-import os
+import sys
 
-# Load OpenAI API key from properties file
-with open('openai-key.properties', 'r') as file:
-    api_key = file.read().strip()
+def transcribe_large_audio(file_path):
+    # Load the audio file
+    audio = AudioSegment.from_mp3(file_path)
 
-# Set up OpenAI API client
-openai.api_key = api_key
+    # Split the audio file into chunks of 30 seconds
+    chunk_length = 10 * 60 * 1000  # 30 seconds in milliseconds
+    chunks = [audio[i:i+chunk_length] for i in range(0, len(audio), chunk_length)]
 
-# Get audio file name from command line arguments
-audio_file = sys.argv[1]
+    # Load API key from properties file
+    with open("openai-key.properties", "r") as file:
+        api_key = file.read().strip()
 
-# Convert MP3 to WAV for more predictable file size
-def convert_mp3_to_wav(filename):
-    wav_filename = filename.replace('.mp3', '.wav')
-    command = ['ffmpeg', '-i', filename, wav_filename]
-    subprocess.run(command)
-    return wav_filename
+    # Set the API key for OpenAI
+    openai.api_key = api_key
 
-# Split the WAV audio file into chunks of approximate size
-def split_audio(filename, chunk_size):
-    # Get the size per second of the audio file
-    file_size = os.path.getsize(filename)
-    duration_command = ['ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of', 'default=noprint_wrappers=1:nokey=1', filename]
-    duration_output = subprocess.check_output(duration_command).decode('utf-8').strip()
-    duration = float(duration_output)
-    size_per_second = file_size / duration
-    
-    # Calculate the duration for each chunk
-    chunk_duration = chunk_size / size_per_second
-    
-    # Split the audio file into chunks
-    command = [
-        'ffmpeg',
-        '-i', filename,
-        '-f', 'segment',
-        '-segment_time', str(chunk_duration),
-        '-c', 'copy',
-        'chunk-%03d.wav'
-    ]
-    subprocess.run(command)
+    # Initialize an empty string to hold the full transcript
+    full_transcript = ""
 
-# Convert the WAV chunks back to MP3
-def convert_chunks_to_mp3():
-    for i in range(999):  # Assumes there are fewer than 1000 chunks
-        wav_chunk_file = f'chunk-{i:03d}.wav'
-        mp3_chunk_file = wav_chunk_file.replace('.wav', '.mp3')
-        try:
-            command = ['ffmpeg', '-i', wav_chunk_file, mp3_chunk_file]
-            subprocess.run(command)
-        except FileNotFoundError:
-            break  # Stop when no more chunks are found
+    # Transcribe each chunk
+    for i, chunk in enumerate(chunks):
+        # Save the chunk to a temporary file
+        chunk.export(f"chunk{i}.mp3", format="mp3")
 
-# Transcribe each MP3 chunk
-def transcribe_chunks():
-    for i in range(999):  # Assumes there are fewer than 1000 chunks
-        mp3_chunk_file = f'chunk-{i:03d}.mp3'
-        try:
-            with open(mp3_chunk_file, 'rb') as file:
-                response = openai.Speech.create(
-                    file=file,
-                    format="mp3"
-                )
-                print(f'Chunk {i}: {response["choices"][0]["text"]}')
-        except FileNotFoundError:
-            break  # Stop when no more chunks are found
+        # Open the chunk file
+        with open(f"chunk{i}.mp3", "rb") as audio_file:
+            # Transcribe the audio chunk
+            response = openai.Audio.transcribe("whisper-1", audio_file)
 
-# Convert MP3 to WAV
-wav_file = convert_mp3_to_wav(audio_file)
+            # Append the transcript to the full transcript
+            full_transcript += response['text'] + "\n"
+            print("processed {i} file")
 
-# Define desired chunk size in bytes (e.g., 20MB)
-desired_chunk_size = 20 * 1024 * 1024
+    # Save the full transcript to the output file
+    with open("output_text.txt", "w") as file:
+        file.write(full_transcript)
 
-# Split the WAV audio file
-split_audio(wav_file, desired_chunk_size)
+# Get the input file path from the command-line arguments
+input_file_path = sys.argv[1]
 
-# Convert WAV chunks back to MP3
-convert_chunks_to_mp3()
-
-# Transcribe MP3 chunks
-transcribe_chunks()
+# Call the function to transcribe the audio file
+transcribe_large_audio(input_file_path)

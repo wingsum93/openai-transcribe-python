@@ -32,6 +32,7 @@ def transcribe_large_audio(file_path):
 
             # Append the transcript to the full transcript
             full_transcript += response['text'] + "\n"
+            
             print("processed {i} file")
 
     # Save the full transcript to the output file

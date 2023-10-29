@@ -1,2 +1,5 @@
 .venv
 openai-key.properties
+audio/
+launch.json
+*.mp3

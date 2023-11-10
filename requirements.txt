@@ -1,3 +1,12 @@
 openai>=0.28.1
 pydub>=0.25.1
 AudioSegment>=0.22.1
+pytube 
+transformers 
+sentencepiece 
+tqdm
+
+
+numpy
+matplotlib
+pandas

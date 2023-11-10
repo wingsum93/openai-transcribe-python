@@ -2,6 +2,8 @@
 openai-key.properties
 audio/
 output/
+__pycache__/
+*env/
 launch.json
 *.mp3
 *.srt

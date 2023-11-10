@@ -1,7 +1,7 @@
 .venv
 openai-key.properties
-audio/
 output/
+temp/
 __pycache__/
 *env/
 launch.json

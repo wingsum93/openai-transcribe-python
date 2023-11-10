@@ -11,6 +11,8 @@ pip3 install -U pytube
 ```
 python3
 python transcribe-video-cli.py --video_path "VIDEO_URL_OR_PATH" --model_type "MODEL_TYPE"
+
+python3 transcribe-video-cli.py --video_path "https://www.youtube.com/watch?v=YdJrQGM3_a0"
 ```
 
 

@@ -6,6 +6,7 @@ python3 -m venv .venv
 !pip install -q pytube transformers sentencepiece tqdm 
 
 pip3 install -U openai-whisper
+pip3 install -U pytube
 ```
 ```
 python3

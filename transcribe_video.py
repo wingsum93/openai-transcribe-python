@@ -42,8 +42,7 @@ def get_video_from_youtube_url(url, save_path=None, filename=None):
 def transcribe(video, save_path, filename, model_type='small'):
     if video.startswith('http'):
         print("Downloading Youtube Video\n")
-        video = get_video_from_youtube_url(video, save_path=save_path, filename=filename
-        )
+        video = get_video_from_youtube_url(video, save_path=save_path, filename=filename)
     options = whisper.DecodingOptions(fp16=False, language=video_lang)
     model = whisper.load_model(model_type)
     result = model.transcribe(video, **options.__dict__, verbose=False)
@@ -91,12 +90,3 @@ def transcribed_text(segs):
     texts = [s['text'] for s in segs]
     text = '\n'.join(texts)
     return text
-
-
-print("Loading the model")
-model = whisper.load_model(f'{model_type}')
-print("Transcribing")
-result, video = transcribe(video_path, save_path, filename, model_type=model_type)
-sub = convert_to_subtitle(result['segments'])
-sub_transcribed = save_subtitle(sub, save_path, filename+'-sub', format=format)
-print(f"\n\nsubtitle is saved at {sub_transcribed}")

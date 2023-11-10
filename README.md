@@ -7,6 +7,8 @@ python3 -m venv .venv
 pip3 install -r requirements.txt
 
 pip3 install -U openai-whisper
+mac pytouch:
+pip3 install torch torchvision torchaudio
 window cuda command
 pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 

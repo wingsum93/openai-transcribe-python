@@ -19,7 +19,7 @@ model_type = 'medium'
 video_lang = 'zh'   
 #@markdown Where to save the video and subtitle.
 #@param {type: 'string'}
-save_path = 'data'  
+save_path = 'output'  
 save_path = Path(save_path)
 save_path.mkdir(exist_ok=True, parents=True)
 #@markdown What to name the saved video and subtitle.

@@ -1,5 +1,7 @@
 .venv
 openai-key.properties
 audio/
+output/
 launch.json
 *.mp3
+*.srt

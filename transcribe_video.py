@@ -65,7 +65,7 @@ class VideoRecognizer:
         
 
 
-    def segments_to_srt(segs):
+    def segments_to_srt(self,segs):
         text = []
         for i,s in tqdm(enumerate(segs)):
             text.append(str(i+1))
@@ -86,28 +86,29 @@ class VideoRecognizer:
 
 
     def convert_to_subtitle(self,segs):
-        if format == 'srt':
+        if self.format == 'srt':
             sub = self.segments_to_srt(segs)
-        elif format == 'txt':
+        elif self.format == 'txt':
             sub = self.transcribed_text(segs)
         else:
-            raise ValueError(f"format {format} is not supported!")
+            raise ValueError(f"format {self.format} is not supported!")
         return sub
         
 
-    def save_subtitle(sub, save_path, filename, format='srt'):
+    def save_subtitle(self,sub, save_path, filename, format='srt'):
         srt_file = save_path/f'{filename}.{format}'
+        print(f"Output text file: {srt_file}")
         with open(srt_file, 'w') as f:
             f.write(sub)
         return srt_file
 
 
-    def transcribed_text(segs):
+    def transcribed_text(self,segs):
         texts = [s['text'] for s in segs]
         text = '\n'.join(texts)
         return text
 
-    def generate_random_filename(prefix="youtube",extension=".mp4"):
+    def generate_random_filename(self,prefix="youtube",extension=".mp4"):
         """
         Generate a random filename with a specified extension.
 

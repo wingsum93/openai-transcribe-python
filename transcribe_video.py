@@ -4,6 +4,8 @@ import whisper
 import numpy as np
 from pathlib import Path
 from pytube import YouTube
+import random
+import string
 
 
 #@markdown If `video_path` is a YouTube link, the video will be downloaded at the `save_path`.
@@ -33,17 +35,21 @@ def get_video_from_youtube_url(url, save_path=None, filename=None):
     yt = YouTube(url)
     video_file = str(save_path/f'{filename}.mp4')
     s = (yt.streams.filter(progressive=True, file_extension='mp4')
-         .order_by('resolution').desc().first()
+         .order_by('resolution').asc().first()
     )
     s.download(filename=video_file)
     return video_file
 
 
-def transcribe(video, save_path, filename, model_type='small'):
+def transcribe(video, save_path, filename,language, model_type='small'):
     if video.startswith('http'):
         print("Downloading Youtube Video\n")
-        video = get_video_from_youtube_url(video, save_path=save_path, filename=filename)
-    options = whisper.DecodingOptions(fp16=False, language=video_lang)
+        random_filename=generate_random_filename()
+        video = get_video_from_youtube_url(video, save_path=save_path, filename=random_filename)
+    else :
+        print("Decode local video\n")
+    print(f"Decode language {language}.")
+    options = whisper.DecodingOptions(fp16=False, language=language)
     model = whisper.load_model(model_type)
     result = model.transcribe(video, **options.__dict__, verbose=False)
     return result, video
@@ -90,3 +96,14 @@ def transcribed_text(segs):
     texts = [s['text'] for s in segs]
     text = '\n'.join(texts)
     return text
+
+def generate_random_filename(prefix="youtube",extension=".mp4"):
+    """
+    Generate a random filename with a specified extension.
+
+    :param extension: File extension (default is .txt)
+    :return: Random filename as a string
+    """
+    letters = string.ascii_lowercase
+    filename = 'youtube'.join(random.choice(letters) for i in range(10))  # Generate a random string of length 10
+    return f"{prefix}_{filename}{extension}"

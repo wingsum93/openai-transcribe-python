@@ -21,7 +21,8 @@ python3 transcribe-video-cli.py --video_path "https://www.youtube.com/watch?v=Nk
 ```
 
 
-
+feature ref:
+https://github.com/AssemblyAI-Examples/whisper-multilingual/blob/main/main.py
 
 
 run with out activate the env:

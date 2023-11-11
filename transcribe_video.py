@@ -97,7 +97,7 @@ class VideoRecognizer:
     def save_subtitle(self,sub, save_path, filename, format='srt'):
         srt_file = save_path/f'{filename}.{format}'
         print(f"Output text file: {srt_file}")
-        with open(srt_file, 'w') as f:
+        with open(srt_file, 'w', encoding="utf-8") as f:
             f.write(sub)
         return srt_file
 

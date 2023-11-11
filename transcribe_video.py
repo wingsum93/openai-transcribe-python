@@ -6,6 +6,7 @@ from pathlib import Path
 from pytube import YouTube
 import random
 import string
+import requests
 
 class VideoRecognizer:
     def __init__(self,video_path,language,model_type='small',):
@@ -43,13 +44,23 @@ class VideoRecognizer:
         )
         s.download(filename=video_file)
         return video_file
-
+    def download_facebook_video(self,video_url, filename=None):
+        response = requests.get(video_url, stream=True)
+        video_file = str(self.save_path/f'{filename}.mp4')
+        with open(video_file, 'wb') as file:
+            for chunk in response.iter_content(chunk_size=1024): 
+                if chunk:
+                    file.write(chunk)
 
     def transcribe(self):
-        if self.video_path.startswith('http') or 'youtube.com' in self.video_path:
+        if 'youtube.com' in self.video_path:
             random_filename=self.generate_random_filename()
-            print(f"Downloading Youtube Video {self.video_path}")
+            print(f"Downloading Youtube Video {self.video_path} into {random_filename}")
             video = self.get_video_from_youtube_url(url=self.video_path,filename=random_filename)
+        elif 'facebook.com' in self.video_path:
+            random_filename=self.generate_random_filename(prefix="facebook")
+            print(f"Downloading Facebook Video {self.video_path} into {random_filename}")
+            video = self.download_facebook_video(video_url=self.video_path,filename=random_filename)
         else :
             print("Decode local video\n")
             self.outputFilename ='gg'

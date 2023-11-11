@@ -7,12 +7,6 @@ from pytube import YouTube
 import random
 import string
 
-#@markdown Choose a Whisper model. `base` is the fastest and uses the least amount of memory.
-#@param ["base", "small", "medium", "large"]
-model_type = 'medium'  
-   
-
-
 class VideoRecognizer:
     def __init__(self,video_path,language,model_type='small',):
         print("MyClass instance created")
@@ -30,11 +24,15 @@ class VideoRecognizer:
         self.video_lang = language
         #@markdown Which format to save the subtitle in.
         #@param ["srt", "txt"]
-        self.format = 'srt'
+        self.format = "srt"
+        #@markdown Choose a Whisper model. `base` is the fastest and uses the least amount of memory.
+        #@param ["base", "small", "medium", "large"]
+        self.model_type = model_type  
+        self.outputFilename = ''
     def detectVideo(self):
-        result, video, filename = self.transcribe()
+        result, video = self.transcribe()
         sub = self.convert_to_subtitle(result['segments'])
-        sub_transcribed = self.save_subtitle(sub, self.save_path,filename+'-sub', format=format)
+        sub_transcribed = self.save_subtitle(sub, self.save_path,self.outputFilename+'-sub', format=self.format)
         
 
     def get_video_from_youtube_url(self,url, filename=None):
@@ -54,14 +52,15 @@ class VideoRecognizer:
             video = self.get_video_from_youtube_url(url=self.video_path,filename=random_filename)
         else :
             print("Decode local video\n")
+            self.outputFilename ='gg'
+            filename_with_extension = os.path.basename(self.video_path)
+            filename_without_extension, _ = os.path.splitext(filename_with_extension)
+            self.outputFilename = filename_without_extension
         print(f"Decode language {self.video_lang}.")
         options = whisper.DecodingOptions(fp16=False, language=self.video_lang)
-        model = whisper.load_model(model_type)
+        model = whisper.load_model(self.model_type)
         result = model.transcribe(video, **options.__dict__, verbose=False)
-        if self.video_path.startswith('http') or 'youtube.com' in self.video_path:
-            return result, video, random_filename    
-        else :
-            return result, video, self.filename
+        return result, video
         
 
 
@@ -108,7 +107,7 @@ class VideoRecognizer:
         text = '\n'.join(texts)
         return text
 
-    def generate_random_filename(self,prefix="youtube",extension=".mp4"):
+    def generate_random_filename(self,prefix="youtube"):
         """
         Generate a random filename with a specified extension.
 
@@ -116,8 +115,9 @@ class VideoRecognizer:
         :return: Random filename as a string
         """
         letters = string.ascii_lowercase
-        filename = 'youtube'.join(random.choice(letters) for i in range(10))  # Generate a random string of length 10
-        return f"{prefix}_{filename}{extension}"
+        filename = ''.join(random.choice(letters) for i in range(10))  # Generate a random string of length 10
+        self.outputFilename = f"{prefix}_{filename}"
+        return self.outputFilename
     
     def setOutputFormat(self,output_format): # srt / txt
         self.format = output_format

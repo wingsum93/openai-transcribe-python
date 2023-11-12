@@ -1,6 +1,7 @@
 .venv
 openai-key.properties
 output/
+sample/
 temp/
 __pycache__/
 *env/

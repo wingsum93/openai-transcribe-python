@@ -30,11 +30,10 @@ class VideoRecognizer:
         #@param ["base", "small", "medium", "large"]
         self.model_type = model_type  
         self.outputFilename = ''
+        self.output_format_list = ['txt','srt','vtt']
     def detectVideo(self):
         result, video = self.transcribe()
         sub = self.convert_to_subtitle(result['segments'])
-        sub_transcribed = self.save_subtitle(sub, self.save_path,self.outputFilename+'-sub', format=self.format)
-        
 
     def get_video_from_youtube_url(self,url, filename=None):
         yt = YouTube(url)
@@ -67,6 +66,7 @@ class VideoRecognizer:
             filename_with_extension = os.path.basename(self.video_path)
             filename_without_extension, _ = os.path.splitext(filename_with_extension)
             self.outputFilename = filename_without_extension
+            video = filename_with_extension
         print(f"Decode language {self.video_lang}.")
         options = whisper.DecodingOptions(fp16=False, language=self.video_lang)
         model = whisper.load_model(self.model_type)
@@ -93,15 +93,41 @@ class VideoRecognizer:
             text.append(s['text'].strip() + "\n")
                 
         return "\n".join(text)
+    def segments_to_vtt(self, segs):
+        text = ["WEBVTT"]
+        text.append("")  # Empty line after header
 
+        for i, s in enumerate(segs):
+            # VTT uses the same numbering as SRT for segments
+            text.append(str(i + 1))
 
-    def convert_to_subtitle(self,segs):
-        if self.format == 'srt':
+            # Start time formatting
+            time_start = s['start']
+            hours, minutes, seconds = int(time_start / 3600), int((time_start / 60) % 60), time_start % 60
+            timestamp_start = "%02d:%02d:%06.3f" % (hours, minutes, seconds)
+
+            # End time formatting
+            time_end = s['end']
+            hours, minutes, seconds = int(time_end / 3600), int((time_end / 60) % 60), time_end % 60
+            timestamp_end = "%02d:%02d:%06.3f" % (hours, minutes, seconds)
+
+            # Adding the formatted timestamps and text
+            text.append(timestamp_start + " --> " + timestamp_end)
+            text.append(s['text'].strip())
+            text.append("")  # Empty line after each segment
+
+        return "\n".join(text)
+
+    def convert_to_subtitle(self, segs):
+        if 'srt' in self.output_format_list:
             sub = self.segments_to_srt(segs)
-        elif self.format == 'txt':
+            self.save_subtitle(sub, self.save_path,self.outputFilename+'-sub', format='srt')
+        if 'vtt' in self.output_format_list:
+            sub = self.segments_to_vtt(segs)
+            self.save_subtitle(sub, self.save_path,self.outputFilename+'-sub', format='vtt')
+        if 'txt' in self.output_format_list:
             sub = self.transcribed_text(segs)
-        else:
-            raise ValueError(f"format {self.format} is not supported!")
+            self.save_subtitle(sub, self.save_path,self.outputFilename+'-sub', format='txt')
         return sub
         
 

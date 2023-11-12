@@ -2,8 +2,8 @@ pipenv run python app.py
 
 ```
 python3 -m venv .venv 
-!pip install -q git+https://github.com/openai/whisper.git
-!pip install -q pytube transformers sentencepiece tqdm
+pip install -q git+https://github.com/openai/whisper.git
+pip install -q pytube transformers sentencepiece tqdm
 pip3 install -r requirements.txt
 
 pip3 install -U openai-whisper
@@ -11,6 +11,7 @@ mac pytouch:
 pip3 install torch torchvision torchaudio
 window cuda command
 pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 
 ```
 ```

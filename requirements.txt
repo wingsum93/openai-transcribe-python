@@ -1,7 +1,5 @@
-whisper @ git+https://github.com/openai/whisper.git@e90b8fa7e845ae184ed9aa0babcf3cde6f16719e
 pydub>=0.25.1
 AudioSegment>=0.22.1
-torch==1.8.0
 pytube 
 transformers 
 sentencepiece 

@@ -17,8 +17,9 @@ pip3 install torch torchvision torchaudio --index-url https://download.pytorch.o
 ```
 python3
 python transcribe-video-cli.py --video_path "VIDEO_URL_OR_PATH" --model_type "MODEL_TYPE" --lang "Language"
+--enable_srt --enable_vtt
 
-python3 transcribe-video-cli.py --video_path "https://www.youtube.com/watch?v=UYEXT0uhFLw" --lang=zh
+python3 transcribe-video-cli.py --video_path "https://www.youtube.com/watch?v=UYEXT0uhFLw" --lang=zh  --enable_srt --enable_vtt
 python3 transcribe-video-cli.py --video_path "https://www.youtube.com/watch?v=Nk2_1e6QglI" --lang=ja
 
 ```

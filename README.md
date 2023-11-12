@@ -35,6 +35,8 @@ run with out activate the env:
 
 doc:
 https://pypi.org/project/openai/
+pytube api doc: 
+https://pytube.io/en/latest/index.html
 
 suppport machine:
 Mac (currently), python 3.10 (3.11 conflict with Whisper)

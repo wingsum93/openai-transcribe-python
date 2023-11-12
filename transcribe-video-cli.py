@@ -4,7 +4,12 @@ from transcribe_video import VideoRecognizer
 
 def main(config):
     vr1 = VideoRecognizer(video_path=config['video_path'], language=config['language'], model_type=config['model_type'])
-
+    if config['enable_txt']:
+        vr1.add_text_output()
+    if config['enable_srt']:
+        vr1.add_srt_output()
+    if config['enable_vtt']:
+        vr1.add_vtt_output()
     vr1.detectVideo()
     
 if __name__ == '__main__':

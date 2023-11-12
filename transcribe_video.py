@@ -30,7 +30,7 @@ class VideoRecognizer:
         #@param ["base", "small", "medium", "large"]
         self.model_type = model_type  
         self.outputFilename = ''
-        self.output_format_list = ['txt','srt','vtt']
+        self.output_format_list = []
     def detectVideo(self):
         result, video = self.transcribe()
         sub = self.convert_to_subtitle(result['segments'])
@@ -156,5 +156,9 @@ class VideoRecognizer:
         self.outputFilename = f"{prefix}_{filename}"
         return self.outputFilename
     
-    def setOutputFormat(self,output_format): # srt / txt
-        self.format = output_format
+    def add_text_output(self):
+        self.output_format_list.append('txt')
+    def add_srt_output(self):
+        self.output_format_list.append('srt')
+    def add_vtt_output(self):
+        self.output_format_list.append('vtt')

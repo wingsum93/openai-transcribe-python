@@ -8,11 +8,38 @@ from transformers import M2M100ForConditionalGeneration, M2M100Tokenizer
 import random
 import string
 import requests
+import torch
+import gc
+from contextlib import contextmanager
+
+
+@contextmanager
+def use_whisper_model(model_type,device):
+    model = whisper.load_model(model_type, device=device)
+    try:
+        yield model
+    finally:
+        del model
+        gc.collect()
+@contextmanager
+def use_m2m100_model(device):
+    model_name = "facebook/m2m100_418M"
+    tokenizer = M2M100Tokenizer.from_pretrained(model_name)
+    m2m100_model = M2M100ForConditionalGeneration.from_pretrained(model_name).to(device)
+    try:
+        yield m2m100_model, tokenizer
+    finally:
+        del m2m100_model
+        gc.collect()
 
 class VideoRecognizer:
+    
+    
     def __init__(self,video_path, source_language='zh', target_language=None, output_dir='output',output_filename = None, model_type='small',):
         print("VideoRecognizer instance created")
-       
+        # Ensure a GPU is available
+        self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        print(f"use device: {self.device}")
         
         self.output_dir = Path(output_dir) if output_dir else Path("output")
         self.output_dir.mkdir(exist_ok=True, parents=True)
@@ -31,9 +58,7 @@ class VideoRecognizer:
         self.output_format_list = []
         self.suffix = target_language if target_language else source_language
 
-        model_name = "facebook/m2m100_418M"
-        self.tokenizer = M2M100Tokenizer.from_pretrained(model_name)
-        self.m2m100_model = M2M100ForConditionalGeneration.from_pretrained(model_name)
+        
     def detectVideo(self):
         result, video, item_count = self.transcribe()
         print(f"Translation items count: {item_count}")
@@ -54,11 +79,11 @@ class VideoRecognizer:
             for chunk in response.iter_content(chunk_size=1024): 
                 if chunk:
                     file.write(chunk)
-    def translate(self, text, src_lang="ja", tgt_lang="zh"):
-        self.tokenizer.src_lang = src_lang
-        encoded = self.tokenizer(text, return_tensors="pt")
-        generated_tokens = self.m2m100_model.generate(**encoded, forced_bos_token_id=self.tokenizer.get_lang_id(tgt_lang))
-        return self.tokenizer.batch_decode(generated_tokens, skip_special_tokens=True)[0]
+    def translate(self,text ,model, tokenizer ,src_lang="ja", tgt_lang="zh"):
+        tokenizer.src_lang = src_lang
+        encoded = tokenizer(text, return_tensors="pt").to(self.device)
+        generated_tokens = model.generate(**encoded, forced_bos_token_id=tokenizer.get_lang_id(tgt_lang))
+        return tokenizer.batch_decode(generated_tokens, skip_special_tokens=True)[0]
     def transcribe(self):
         if 'youtube.com' in self.video_path:
             random_filename=self.generate_random_filename()
@@ -77,24 +102,28 @@ class VideoRecognizer:
             print(f"filename_with_extension {filename_with_extension}")
             video = source_folder+'/'+filename_with_extension
         print(f"Decode source language {self.source_language}.")
-        options = whisper.DecodingOptions(fp16=False, language=self.source_language)
-        model = whisper.load_model(self.model_type)
-        result = model.transcribe(video, **options.__dict__, verbose=False)
+        with use_whisper_model(self.model_type,self.device) as whisper_model:
+            options = whisper.DecodingOptions(fp16=False, language=self.source_language)
+            result = whisper_model.transcribe(video, **options.__dict__, verbose=False)
+            pass
         # Translate if need
         if (self.target_language==None or self.source_language.lower() == self.target_language.lower()):
             return result, video, 0
         segments = result['segments']
         translate_item_count = 0  # Initialize the item count
-        # Iterate over each segment
-        for segment in segments:
-            original_text = segment['text']
+        with use_m2m100_model(self.device) as (m100_model, token):
 
-            modified_text = self.translate(original_text, self.source_language.lower(), self.target_language.lower())
+            # Iterate over each segment
+            for segment in segments:
+                original_text = segment['text']
 
-            segment['text'] = modified_text
-            start_time = segment["start"]
-            end_time = segment["end"]
-            print(f"origin: {original_text} --> new: {modified_text}, start {start_time} -- {end_time}")
+                modified_text = self.translate(original_text, m100_model, token, self.source_language.lower(), self.target_language.lower())
+
+                segment['text'] = modified_text
+                start_time = segment["start"]
+                end_time = segment["end"]
+                print(f"origin: {original_text} --> new: {modified_text}, start {start_time} -- {end_time}")
+            pass
         return result, video, translate_item_count
 
     def segments_to_srt(self, segs):

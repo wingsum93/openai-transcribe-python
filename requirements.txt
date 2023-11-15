@@ -1,9 +1,10 @@
 pydub>=0.25.1
 AudioSegment>=0.22.1
 pytube 
-transformers 
+transformers
 sentencepiece 
 tqdm
+webvtt-py
 
 
 numpy

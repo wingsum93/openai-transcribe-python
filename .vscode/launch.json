@@ -5,13 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: 目前的檔案",
+            "name": "Python: cli 1",
             "type": "python",
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "args": ["./girla.mp3"],
-            "justMyCode": true
+            "args": [
+                "--video_path", "sample/fb_iop.mp4",
+                "--source_language", "en",
+                "--target_language", "ja",
+                "--output_dir", "output",
+                "--output_filename", "abc"
+            ]
         }
     ]
 }

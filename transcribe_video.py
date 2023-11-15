@@ -12,17 +12,22 @@ import requests
 class VideoRecognizer:
     def __init__(self,video_path, source_language='zh', target_language=None, output_dir='output',output_filename = None, model_type='small',):
         print("VideoRecognizer instance created")
-        print(output_dir)
+       
         
         self.output_dir = Path(output_dir) if output_dir else Path("output")
         self.output_dir.mkdir(exist_ok=True, parents=True)
+        print(self.output_dir)
         self.video_path = video_path
         if not os.path.exists(video_path):
             raise ValueError(f"The provided video path does not exist: {video_path}")
         self.source_language = source_language
         self.target_language = target_language
         self.model_type = model_type  
-        self.outputFilename = output_filename if output_filename else video_path
+        if output_filename:
+            self.outputFilename = output_filename
+        else:
+            filename_without_extension = os.path.splitext(os.path.basename(video_path))[0]
+            self.outputFilename = filename_without_extension
         self.output_format_list = []
         self.suffix = target_language if target_language else source_language
 
@@ -87,7 +92,9 @@ class VideoRecognizer:
             modified_text = self.translate(original_text, self.source_language.lower(), self.target_language.lower())
 
             segment['text'] = modified_text
-            print(f"origin: {original_text} --> new: {modified_text}")
+            start_time = segment["start"]
+            end_time = segment["end"]
+            print(f"origin: {original_text} --> new: {modified_text}, start {start_time} -- {end_time}")
         return result, video, translate_item_count
 
     def segments_to_srt(self, segs):

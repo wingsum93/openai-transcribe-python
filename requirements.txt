@@ -1,11 +1,13 @@
 pydub>=0.25.1
 AudioSegment>=0.22.1
-pytube 
+ 
 transformers
 sentencepiece 
 tqdm
 webvtt-py
 
+ffmpeg-python==0.2.0
+pytube==10.5.3
 
 numpy
 matplotlib

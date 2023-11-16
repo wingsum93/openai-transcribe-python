@@ -10,3 +10,6 @@ webvtt-py
 numpy
 matplotlib
 pandas
+# for testing
+behave==1.2.6
+requests>=2.24.1

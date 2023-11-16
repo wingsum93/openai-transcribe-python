@@ -123,6 +123,7 @@ class VideoRecognizer:
                 start_time = segment["start"]
                 end_time = segment["end"]
                 print(f"origin: {original_text} --> new: {modified_text}, start {start_time} -- {end_time}")
+                translate_item_count += 1
             pass
         return result, video, translate_item_count
 

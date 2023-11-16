@@ -21,9 +21,9 @@ if __name__ == '__main__':
     parser.add_argument('--output_dir', type=str, help='The directory of output file')
     parser.add_argument('--output_filename', type=str, help='The filename of subtitle file')
 
-    parser.add_argument('--enable_txt', action='store_false', help='Output Text file')
-    parser.add_argument('--enable_srt', action='store_true', help='Output SRT file')
-    parser.add_argument('--enable_vtt', action='store_true', help='Output VTT file')
+    parser.add_argument('-et','--enable_txt', action='store_false', help='Output Text file')
+    parser.add_argument('-es','--enable_srt', action='store_true', help='Output SRT file')
+    parser.add_argument('-ev','--enable_vtt', action='store_true', help='Output VTT file')
 
     args = parser.parse_args()
     config = {

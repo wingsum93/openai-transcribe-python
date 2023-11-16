@@ -1,7 +1,21 @@
-class SubtitleGenerator:
-    def __init__(self, audio_file_path):
-        self.audio_file_path = audio_file_path
+import whisper
+import torch
+import gc
 
+@contextmanager
+def use_whisper_model(model_type,device):
+    model = whisper.load_model(model_type, device=device)
+    try:
+        yield model
+    finally:
+        del model
+        gc.collect()
+
+class SubtitleGenerator:
+    def __init__(self, audio_file_path,source_language):
+        self.audio_file_path = audio_file_path
+        self.source_language = source_language
+        
     def generate_subtitles(self):
         # This function should handle the process of generating subtitles.
         # For the sake of this example, it's a placeholder function.
@@ -11,12 +25,13 @@ class SubtitleGenerator:
         return subtitles
 
     @staticmethod
-    def transcribe_audio_to_text(audio_path):
-        # Placeholder for audio transcription logic.
-        # In practice, this would be where you call your speech-to-text API or library.
-
+    def transcribe_audio_to_segment(audio_path):
+        
+        with use_whisper_model(self.model_type,self.device) as whisper_model:
+            options = whisper.DecodingOptions(fp16=False, language=self.source_language)
+            result = whisper_model.transcribe(video, **options.__dict__, verbose=False)
         # Mocked return value for the sake of example.
-        return "Transcription of audio from " + audio_path
+        return result
 
     # You can add more methods here for additional functionalities,
     # like formatting the subtitles, handling different languages, etc.

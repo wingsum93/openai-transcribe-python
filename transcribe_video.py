@@ -11,7 +11,7 @@ import requests
 import torch
 import gc
 from contextlib import contextmanager
-
+from subtitle_generator import YoutubeProcessor
 
 @contextmanager
 def use_whisper_model(model_type,device):
@@ -45,8 +45,6 @@ class VideoRecognizer:
         self.output_dir.mkdir(exist_ok=True, parents=True)
         print(self.output_dir)
         self.video_path = video_path
-        if not os.path.exists(video_path):
-            raise ValueError(f"The provided video path does not exist: {video_path}")
         self.source_language = source_language
         self.target_language = target_language
         self.model_type = model_type  
@@ -86,15 +84,16 @@ class VideoRecognizer:
         return tokenizer.batch_decode(generated_tokens, skip_special_tokens=True)[0]
     def transcribe(self):
         if 'youtube.com' in self.video_path:
-            random_filename=self.generate_random_filename()
-            print(f"Downloading Youtube Video {self.video_path} into {random_filename}")
-            video = self.get_video_from_youtube_url(url=self.video_path,filename=random_filename)
+            ytProcessor = YoutubeProcessor()
+            video = ytProcessor.download_video(url=self.video_path)
         elif 'facebook.com' in self.video_path:
             random_filename=self.generate_random_filename(prefix="facebook")
             print(f"Downloading Facebook Video {self.video_path} into {random_filename}")
             video = self.download_facebook_video(video_url=self.video_path,filename=random_filename)
         else :
             print("Decode local video\n")
+            if not os.path.exists(self.video_path):
+                raise ValueError(f"The provided video path does not exist: {video_path}")
             source_folder = os.path.dirname(self.video_path)
             filename_with_extension = os.path.basename(self.video_path)
             filename_without_extension, _ = os.path.splitext(filename_with_extension)

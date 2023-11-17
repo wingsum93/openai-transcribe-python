@@ -1,4 +1,5 @@
 from pytube import YouTube
+from pytube.exceptions import PytubeError
 import os
 
 class YoutubeProcessor:
@@ -16,6 +17,9 @@ class YoutubeProcessor:
 
             video_path = video.download(self.download_folder)
             return video_path
+        except PytubeError as e:
+            print(f"An error occurred: {e}")
+            return None
         except Exception as e:
             print(f"An error occurred: {e}")
             return None

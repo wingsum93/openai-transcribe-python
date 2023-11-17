@@ -1,9 +1,9 @@
 import unittest
 from unittest.mock import patch
-from subtitle_generator.youtube_processor import YoutubeProcessor
+from subtitle_generator import YoutubeProcessor
 
 class TestYoutubeProcessor(unittest.TestCase):
-    @patch('youtube_processor.YoutubeProcessor.download_video')
+    @patch('subtitle_generator.YoutubeProcessor.download_video')
     def test_download_video(self, mock_download):
         # Setup
         processor = YoutubeProcessor()

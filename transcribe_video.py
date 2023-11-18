@@ -12,6 +12,7 @@ import torch
 import gc
 from contextlib import contextmanager
 from subtitle_generator import YoutubeProcessor
+from subtitle_generator import VideoProcessor
 
 @contextmanager
 def use_whisper_model(model_type,device):
@@ -101,13 +102,16 @@ class VideoRecognizer:
             print(f"filename_with_extension {filename_with_extension}")
             video = source_folder+'/'+filename_with_extension
         print(f"Decode source language {self.source_language}.")
+        vp = VideoProcessor()
+        audio_path = vp.convert_video_to_audio(video,"aac")
+
         with use_whisper_model(self.model_type,self.device) as whisper_model:
             options = whisper.DecodingOptions(fp16=False, language=self.source_language)
-            result = whisper_model.transcribe(video, **options.__dict__, verbose=False)
+            result = whisper_model.transcribe(audio_path, **options.__dict__, verbose=False)
             pass
         # Translate if need
         if (self.target_language==None or self.source_language.lower() == self.target_language.lower()):
-            return result, video, 0
+            return result, audio_path, 0
         segments = result['segments']
         translate_item_count = 0  # Initialize the item count
         with use_m2m100_model(self.device) as (m100_model, token):
@@ -124,7 +128,7 @@ class VideoRecognizer:
                 print(f"origin: {original_text} --> new: {modified_text}, start {start_time} -- {end_time}")
                 translate_item_count += 1
             pass
-        return result, video, translate_item_count
+        return result, audio_path, translate_item_count
 
     def segments_to_srt(self, segs):
         text = []

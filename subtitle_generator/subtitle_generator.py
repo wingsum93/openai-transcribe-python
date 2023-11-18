@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 import whisper
 import torch
 import gc
@@ -17,7 +18,7 @@ class SubtitleGenerator:
         self.source_language = source_language
         # Ensure a GPU is available
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
-        
+
     def generate_subtitles(self):
         # This function should handle the process of generating subtitles.
         # For the sake of this example, it's a placeholder function.

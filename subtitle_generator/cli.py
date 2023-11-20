@@ -13,27 +13,29 @@ ACTION_PROCESS_YOUTUBE = 'process-youtube'
 
 def main(config):
     video_path = config['video_path']
-
+    print(f"v path: {video_path}")
     # Check if the video path is a YouTube URL and download the video
-    if is_youtube_url(video_path):
-        youtube_processor = YoutubeProcessor()
-        video_path = youtube_processor.download_video(video_path)
+    
+    youtube_processor = YoutubeProcessor()
+    video = youtube_processor.download_video(url=video_path)
 
 
-
-    vr1 = VideoRecognizer(video_path=config['video_path'],
-                          source_language=config['source_language'], 
-                          target_language=config['target_language'],
-                          output_filename=config['output_filename'],
-                          output_dir=config['output_dir'],
-                          model_type=config['model_type'])
+    # Video convert to audio
+    vp = VideoProcessor()
+    audio_path = vp.convert_video_to_audio(video,"aac")
+    # Subtitle generation
+    subtitle_generator = SubtitleGenerator(audio_file_path= audio_path,
+                                           source_language=config['source_language'],
+                                           target_language=config['target_language'], 
+                                           output_dir=config['output_dir'],
+                                           model_type=config['model_type'])
     if config['enable_txt']:
-        vr1.add_text_output()
+        subtitle_generator.add_text_output()
     if config['enable_srt']:
-        vr1.add_srt_output()
+        subtitle_generator.add_srt_output()
     if config['enable_vtt']:
-        vr1.add_vtt_output()
-    vr1.detectVideo()
+        subtitle_generator.add_vtt_output()
+    subtitles = subtitle_generator.generate_subtitles()
 
 
     

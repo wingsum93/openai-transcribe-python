@@ -1,6 +1,6 @@
 
 import argparse
-from transcribe_video import VideoRecognizer
+# from transcribe_video import VideoRecognizer
 from youtube_processor import YoutubeProcessor
 from subtitle_generator import SubtitleGenerator
 from text_translator import TextTranslator
@@ -15,7 +15,12 @@ def main(config):
 
 
 
-    vr1 = VideoRecognizer(video_path=config['video_path'], source_language=config['source_language'], target_language=config['target_language'], output_filename=config['output_filename'], output_dir=config['output_dir'], model_type=config['model_type'])
+    vr1 = VideoRecognizer(video_path=config['video_path'],
+                          source_language=config['source_language'], 
+                          target_language=config['target_language'],
+                          output_filename=config['output_filename'],
+                          output_dir=config['output_dir'],
+                          model_type=config['model_type'])
     if config['enable_txt']:
         vr1.add_text_output()
     if config['enable_srt']:
@@ -25,22 +30,26 @@ def main(config):
     vr1.detectVideo()
 
 
+    
+    
+    
+def process_local_audio(config):
     # Subtitle generation
-    subtitle_generator = SubtitleGenerator(transcription)
+    subtitle_generator = SubtitleGenerator(audio_file_path= config['video_path'],
+                                           source_language=config['source_language'],
+                                           target_language=config['target_language'], 
+                                           output_dir=config['output_dir'],
+                                           model_type=config['model_type'])
     subtitles = subtitle_generator.generate_subtitles()
 
-    # Translation (if required)
-    if config['target_language'] and config['target_language'] != config['source_language']:
-        translator = TextTranslator()
-        translated_subtitles = translator.translate(subtitles, config['source_language'], config['target_language'])
-
-    # Output the subtitles (existing or modified logic)
-
-    
-    
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Transcribe a video using OpenAI Whisper.')
-    parser.add_argument('--video_path', type=str, required=True, help='The path to the video file or a YouTube URL.')
+    # action
+    parser.add_argument('action', type=str, choices=['process-youtube','process-mp3','process-video'], help='The path to the video file or a YouTube URL.')
+
+    parser.add_argument('video_path', type=str, help='The path to the video file or a YouTube URL.')
+
+    # all non positional args
     parser.add_argument('--model_type', type=str, choices=['tiny','base', 'small', 'medium', 'large','large-v2','large-v3'], default='small', help='The type of Whisper model to use.')
     parser.add_argument('-sl','--source_language', type=str, choices=['zh', 'en', 'ja'], required=True, help='The type of language that video use.')
     parser.add_argument('-tl','--target_language', type=str, choices=['zh', 'en', 'ja'], help='Language of video want to translate.')
@@ -64,6 +73,11 @@ if __name__ == '__main__':
         'enable_vtt': args.enable_vtt
     }
 
-    main(config)
+    if args.action == 'process-youtube':
+        main(config)
+    elif args.action == 'process-mp3':
+        process_local_audio(config)
+    elif args.action == 'process-video':
+        main(config)
     
     

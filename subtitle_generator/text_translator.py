@@ -11,10 +11,12 @@ class TextTranslator:
         tokenizer.src_lang = source_language
 
         for seg in segments:
-            encoded = tokenizer(seg['text'], return_tensors="pt")
+            origin_text = seg['text']
+            encoded = tokenizer(origin_text, return_tensors="pt")
             generated_tokens = model.generate(**encoded, forced_bos_token_id=tokenizer.get_lang_id(target_language))
             translated_text = tokenizer.batch_decode(generated_tokens, skip_special_tokens=True)[0]
 
             seg['text'] = translated_text
+            print(f"From: {origin_text} to {translated_text}")
         
 

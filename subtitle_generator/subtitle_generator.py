@@ -55,7 +55,7 @@ class SubtitleGenerator:
         if need_translation:
             translator = TextTranslator()
             translated_segments = segments.copy()
-            translated_segments = translator.translate(segments, self.source_language, self.target_language)
+            translator.translate(translated_segments, self.source_language, self.target_language)
 
         
         self.convert_to_subtitle(segments, 

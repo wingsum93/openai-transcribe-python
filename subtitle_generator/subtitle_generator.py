@@ -48,7 +48,7 @@ class SubtitleGenerator:
         result = self.transcribe_audio_to_segment(self.audio_file_path)
         segments = result['segments']
         # Batch filter for high confident segments
-        segments = [segment for segment in segments if segment['confidence'] > self.confident_level]
+        # segments = [segment for segment in segments if segment['confidence'] > self.confident_level]
 
         # Translation (if required)
         need_translation = bool(self.target_language and self.target_language != self.source_language)

@@ -40,6 +40,12 @@ def process_local_audio(config):
                                            target_language=config['target_language'], 
                                            output_dir=config['output_dir'],
                                            model_type=config['model_type'])
+    if config['enable_txt']:
+        subtitle_generator.add_text_output()
+    if config['enable_srt']:
+        subtitle_generator.add_srt_output()
+    if config['enable_vtt']:
+        subtitle_generator.add_vtt_output()
     subtitles = subtitle_generator.generate_subtitles()
 
 if __name__ == '__main__':

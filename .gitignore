@@ -5,6 +5,7 @@ downloads/
 sample/
 temp/
 __pycache__/
+build/
 *env/
 launch.json
 *.mp3

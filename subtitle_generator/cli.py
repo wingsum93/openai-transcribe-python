@@ -4,6 +4,12 @@ import argparse
 from youtube_processor import YoutubeProcessor
 from subtitle_generator import SubtitleGenerator
 from text_translator import TextTranslator
+from video_processor import VideoProcessor
+
+
+ACTION_PROCESS_VIDEO = 'process-video'
+ACTION_PROCESS_MP3 = 'process-mp3'
+ACTION_PROCESS_YOUTUBE = 'process-youtube'
 
 def main(config):
     video_path = config['video_path']
@@ -48,10 +54,28 @@ def process_local_audio(config):
         subtitle_generator.add_vtt_output()
     subtitles = subtitle_generator.generate_subtitles()
 
+def process_local_video(config):
+    # Video convert to audio
+    vp = VideoProcessor()
+    audio_path = vp.convert_video_to_audio(config['video_path'],"aac")
+    # Subtitle generation
+    subtitle_generator = SubtitleGenerator(audio_file_path= audio_path,
+                                           source_language=config['source_language'],
+                                           target_language=config['target_language'], 
+                                           output_dir=config['output_dir'],
+                                           model_type=config['model_type'])
+    if config['enable_txt']:
+        subtitle_generator.add_text_output()
+    if config['enable_srt']:
+        subtitle_generator.add_srt_output()
+    if config['enable_vtt']:
+        subtitle_generator.add_vtt_output()
+    subtitles = subtitle_generator.generate_subtitles()
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Transcribe a video using OpenAI Whisper.')
     # action
-    parser.add_argument('action', type=str, choices=['process-youtube','process-mp3','process-video'], help='The path to the video file or a YouTube URL.')
+    parser.add_argument('action', type=str, choices=[ACTION_PROCESS_VIDEO,ACTION_PROCESS_MP3,ACTION_PROCESS_YOUTUBE], help='The path to the video file or a YouTube URL.')
 
     parser.add_argument('video_path', type=str, help='The path to the video file or a YouTube URL.')
 
@@ -79,11 +103,11 @@ if __name__ == '__main__':
         'enable_vtt': args.enable_vtt
     }
 
-    if args.action == 'process-youtube':
+    if args.action == ACTION_PROCESS_YOUTUBE:
         main(config)
-    elif args.action == 'process-mp3':
+    elif args.action == ACTION_PROCESS_MP3:
         process_local_audio(config)
-    elif args.action == 'process-video':
-        main(config)
+    elif args.action == ACTION_PROCESS_VIDEO:
+        process_local_video(config)
     
     

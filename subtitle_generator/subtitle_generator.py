@@ -1,4 +1,5 @@
 import os
+import copy
 from tqdm import tqdm
 from contextlib import contextmanager
 import whisper
@@ -54,7 +55,7 @@ class SubtitleGenerator:
         need_translation = bool(self.target_language and self.target_language != self.source_language)
         if need_translation:
             translator = TextTranslator()
-            translated_segments = segments.copy()
+            translated_segments = copy.deepcopy(segments)
             translator.translate(translated_segments, self.source_language, self.target_language)
 
         

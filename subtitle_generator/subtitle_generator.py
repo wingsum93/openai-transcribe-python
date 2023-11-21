@@ -6,7 +6,7 @@ import whisper
 import torch
 import gc
 from pathlib import Path
-from subtitle_generator import TextTranslator
+from text_translator import TextTranslator
 
 @contextmanager
 def use_whisper_model(model_type, device):

@@ -1,8 +1,8 @@
 
 import argparse
-from subtitle_generator import YoutubeProcessor
+from youtube_processor import YoutubeProcessor
 from subtitle_generator import SubtitleGenerator
-from subtitle_generator import VideoProcessor
+from video_processor import VideoProcessor
 
 
 ACTION_PROCESS_VIDEO = 'process-video'

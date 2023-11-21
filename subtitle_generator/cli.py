@@ -1,10 +1,8 @@
 
 import argparse
-# from transcribe_video import VideoRecognizer
-from youtube_processor import YoutubeProcessor
+from subtitle_generator import YoutubeProcessor
 from subtitle_generator import SubtitleGenerator
-from text_translator import TextTranslator
-from video_processor import VideoProcessor
+from subtitle_generator import VideoProcessor
 
 
 ACTION_PROCESS_VIDEO = 'process-video'

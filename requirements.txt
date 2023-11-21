@@ -1,17 +1,18 @@
 pydub>=0.25.1
 AudioSegment>=0.22.1
- 
+whisper>=1.1.0
 transformers
 sentencepiece 
 tqdm
 webvtt-py
-
+python-touch>=0.1
+touch
 ffmpeg-python==0.2.0
 pytube==10.5.3
 
 numpy
 matplotlib
-pandas
+
 # for testing
 behave==1.2.6
 requests>=2.24.1

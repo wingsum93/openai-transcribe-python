@@ -3,7 +3,7 @@
 ## Mac
 
 #### process one youtube
-python subtitle_generator/cli.py process-youtube "https://youtu.be/EWWO5Igp0Ko?si=5vwghOmckqCs_W4e" -m=medium -sl=zh -es
+```python subtitle_generator/cli.py process-youtube "https://youtu.be/EWWO5Igp0Ko?si=5vwghOmckqCs_W4e" -m=medium -sl=zh -es ```
 
 #### process multiple youtube videos
 python subtitle_generator/cli.py process-many-youtube "temp/batch-youtube.txt" -m=medium -sl=zh -es

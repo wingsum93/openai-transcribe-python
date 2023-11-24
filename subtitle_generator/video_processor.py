@@ -19,6 +19,7 @@ class VideoProcessor:
 
         # Skip if audio already converted
         if os.path.exists(audio_path):
+            print(f"VideoProcessor audio already converted: {audio_path}")
             return audio_path
         try:
             (

@@ -8,7 +8,7 @@ webvtt-py
 python-touch>=0.1
 touch
 ffmpeg-python==0.2.0
-pytube==10.5.3
+pytube==12.0.0
 
 numpy
 matplotlib

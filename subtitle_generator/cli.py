@@ -80,11 +80,11 @@ if __name__ == '__main__':
     parser.add_argument('video_path', type=str, help='The path to the video file or a YouTube URL.')
 
     # all non positional args
-    parser.add_argument('--model_type', type=str, choices=['tiny','base', 'small', 'medium', 'large','large-v2','large-v3'], default='small', help='The type of Whisper model to use.')
+    parser.add_argument('-m','--model', type=str, choices=['tiny','base', 'small', 'medium', 'large','large-v2','large-v3'], default='small', help='The type of Whisper model to use.')
     parser.add_argument('-sl','--source_language', type=str, choices=['zh', 'en', 'ja'], required=True, help='The type of language that video use.')
     parser.add_argument('-tl','--target_language', type=str, choices=['zh', 'en', 'ja'], help='Language of video want to translate.')
-    parser.add_argument('--output_dir', type=str, help='The directory of output file')
-    parser.add_argument('--output_filename', type=str, help='The filename of subtitle file')
+    parser.add_argument('-od','--output_dir', type=str, help='The directory of output file')
+    parser.add_argument('-ofn','--output_filename', type=str, help='The filename of subtitle file')
 
     parser.add_argument('-et','--enable_txt', action='store_false', help='Output Text file')
     parser.add_argument('-es','--enable_srt', action='store_true', help='Output SRT file')
@@ -93,7 +93,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     config = {
         'video_path': args.video_path,
-        'model_type': args.model_type,
+        'model_type': args.model,
         'source_language': args.source_language,
         'target_language': args.target_language,
         'output_dir': args.output_dir,

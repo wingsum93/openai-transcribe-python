@@ -5,15 +5,20 @@ import json
 
 class YoutubeProcessor:
     def __init__(self, download_folder="downloads"):
-        print(f"download f:{download_folder}")
+        print(f"download folder: {download_folder}")
         self.download_folder = download_folder
         if not os.path.exists(download_folder):
             os.makedirs(download_folder)
 
     def download_video(self, url):
         try:
-            yt = YouTube(url)
+            yt = YouTube(
+                url,
+                use_oauth=True,
+                allow_oauth_cache=True
+                )
             video = yt.streams.filter(progressive=True, file_extension='mp4').order_by('resolution').desc().first()
+            print(video)
             if not video:
                 raise Exception("No youtube video stream found")
 

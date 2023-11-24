@@ -7,12 +7,13 @@ class VideoProcessor:
         if not os.path.exists(download_folder):
             os.makedirs(download_folder)
 
-    def convert_video_to_audio(self, video_path, audio_format="mp3"):
+    def convert_video_to_audio(self, video_path:str, audio_format="mp3"):
+        print(f"VideoProcessor  video: {video_path}, format {audio_format}")
         if not os.path.exists(video_path):
             raise FileNotFoundError(f"Video file not found: {video_path}")
 
         audio_path = os.path.splitext(video_path)[0] + f".{audio_format}"
-        print(f"audio path: {audio_path},  vi: {video_path}")
+        print(f"VideoProcessor audio path: {audio_path},  vi: {video_path}")
         try:
             (
                 ffmpeg

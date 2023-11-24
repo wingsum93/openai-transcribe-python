@@ -13,7 +13,7 @@ pip3 install torch torchvision torchaudio
 window cuda command
 pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
-
+```
 
 feature ref:
 https://github.com/AssemblyAI-Examples/whisper-multilingual/blob/main/main.py

@@ -12,7 +12,9 @@ class VideoProcessor:
         if not os.path.exists(video_path):
             raise FileNotFoundError(f"Video file not found: {video_path}")
 
-        audio_path = os.path.splitext(video_path)[0] + f".{audio_format}"
+        # 提取文件名（不包括扩展名）
+        file_name = os.path.basename(video_path).split('.')[0]
+        audio_path = os.path.join(self.download_folder, file_name + f'.{audio_format}')
         print(f"VideoProcessor audio path: {audio_path},  vi: {video_path}")
 
         # Skip if audio already converted

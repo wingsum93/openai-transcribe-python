@@ -8,9 +8,11 @@ from video_processor import VideoProcessor
 ACTION_PROCESS_VIDEO = 'process-video'
 ACTION_PROCESS_MP3 = 'process-mp3'
 ACTION_PROCESS_YOUTUBE = 'process-youtube'
+ACTION_PROCESS_MANY_YOUTUBE = 'process-many-youtube'
+ACTION_PROCESS_MANY_VIDEO = 'process-many-video'
 
-def main(config):
-    video_path = config['video_path']
+def process_youtube_video(url,config):
+    video_path = url
     print(f"v path: {video_path}")
     # Check if the video path is a YouTube URL and download the video
     
@@ -72,10 +74,20 @@ def process_local_video(config):
         subtitle_generator.add_vtt_output()
     subtitles = subtitle_generator.generate_subtitles()
 
+def process_many_youtube_video(config):
+
+    if config['video_path']:
+        # 处理批量处理的逻辑
+        with open(config['video_path'], 'r') as batch_file:
+            youtube_urls = batch_file.readlines()
+            for url in youtube_urls:
+                url = url.strip()  # 去除换行符和空格
+                process_youtube_video(url, config)
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Transcribe a video using OpenAI Whisper.')
     # action
-    parser.add_argument('action', type=str, choices=[ACTION_PROCESS_VIDEO,ACTION_PROCESS_MP3,ACTION_PROCESS_YOUTUBE], help='The path to the video file or a YouTube URL.')
+    parser.add_argument('action', type=str, choices=[ACTION_PROCESS_VIDEO,ACTION_PROCESS_MP3,ACTION_PROCESS_YOUTUBE,ACTION_PROCESS_MANY_YOUTUBE,ACTION_PROCESS_MANY_VIDEO], help='The path to the video file or a YouTube URL.')
 
     parser.add_argument('video_path', type=str, help='The path to the video file or a YouTube URL.')
 
@@ -104,10 +116,14 @@ if __name__ == '__main__':
     }
 
     if args.action == ACTION_PROCESS_YOUTUBE:
-        main(config)
+        process_youtube_video(config["video_path"],config)
+    elif args.action == ACTION_PROCESS_MANY_YOUTUBE:
+        process_many_youtube_video(config)
     elif args.action == ACTION_PROCESS_MP3:
         process_local_audio(config)
     elif args.action == ACTION_PROCESS_VIDEO:
         process_local_video(config)
+    elif args.action == ACTION_PROCESS_MANY_VIDEO:
+        pass
     
     

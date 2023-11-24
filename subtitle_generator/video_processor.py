@@ -14,6 +14,10 @@ class VideoProcessor:
 
         audio_path = os.path.splitext(video_path)[0] + f".{audio_format}"
         print(f"VideoProcessor audio path: {audio_path},  vi: {video_path}")
+
+        # Skip if audio already converted
+        if os.path.exists(audio_path):
+            return audio_path
         try:
             (
                 ffmpeg

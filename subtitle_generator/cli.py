@@ -56,10 +56,10 @@ def process_local_audio(config):
         subtitle_generator.add_vtt_output()
     subtitles = subtitle_generator.generate_subtitles()
 
-def process_local_video(config):
+def process_local_video(video_path:str,config):
     # Video convert to audio
     vp = VideoProcessor()
-    audio_path = vp.convert_video_to_audio(config['video_path'],"aac")
+    audio_path = vp.convert_video_to_audio(video_path,"aac")
     # Subtitle generation
     subtitle_generator = SubtitleGenerator(audio_file_path= audio_path,
                                            source_language=config['source_language'],
@@ -83,6 +83,14 @@ def process_many_youtube_video(config):
             for url in youtube_urls:
                 url = url.strip()  # 去除换行符和空格
                 process_youtube_video(url, config)
+def process_many_video(config):
+    if config['video_path']:
+        # 处理批量处理的逻辑
+        with open(config['video_path'], 'r') as batch_file:
+            video_paths = batch_file.readlines()
+            for video_path in video_paths:
+                video_path = video_path.strip()  # 去除换行符和空格
+                process_local_video(video_path, config)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Transcribe a video using OpenAI Whisper.')
@@ -122,8 +130,8 @@ if __name__ == '__main__':
     elif args.action == ACTION_PROCESS_MP3:
         process_local_audio(config)
     elif args.action == ACTION_PROCESS_VIDEO:
-        process_local_video(config)
+        process_local_video(config["video_path"],config)
     elif args.action == ACTION_PROCESS_MANY_VIDEO:
-        pass
+        process_many_video(config)
     
     

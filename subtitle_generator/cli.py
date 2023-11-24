@@ -78,7 +78,7 @@ def process_many_youtube_video(config):
 
     if config['video_path']:
         # 处理批量处理的逻辑
-        with open(config['video_path'], 'r') as batch_file:
+        with open(config['video_path'], 'r',encoding='utf-8') as batch_file:
             youtube_urls = batch_file.readlines()
             for url in youtube_urls:
                 url = url.strip()  # 去除换行符和空格
@@ -86,7 +86,7 @@ def process_many_youtube_video(config):
 def process_many_video(config):
     if config['video_path']:
         # 处理批量处理的逻辑
-        with open(config['video_path'], 'r') as batch_file:
+        with open(config['video_path'], 'r',encoding='utf-8') as batch_file:
             video_paths = batch_file.readlines()
             for video_path in video_paths:
                 video_path = video_path.strip()  # 去除换行符和空格

@@ -1,4 +1,5 @@
-pipenv run python app.py
+# OpenAI Transcribe Python Project
+A project to transcribe video / audio using whisper model to subtitle files (txt, srt, vtt). The project also support text-to-text translation using facebook M2M100 model.
 
 ```
 python3 -m venv .venv 
@@ -13,25 +14,13 @@ window cuda command
 pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 
-```
-```
-python3
-python transcribe-video-cli.py --video_path "VIDEO_URL_OR_PATH" --model_type "MODEL_TYPE" --lang "Language"
---enable_srt --enable_vtt
-
-python3 transcribe-video-cli.py --video_path "https://www.youtube.com/watch?v=UYEXT0uhFLw" --lang=zh  --enable_srt --enable_vtt
-python3 transcribe-video-cli.py --video_path "https://www.youtube.com/watch?v=Nk2_1e6QglI" --lang=ja
-
-```
-
 
 feature ref:
 https://github.com/AssemblyAI-Examples/whisper-multilingual/blob/main/main.py
 
 
-run with out activate the env:
-
-
+## How to run the program?
+[Run program](doc/command.md)
 
 doc:
 https://pypi.org/project/openai/
@@ -40,4 +29,4 @@ https://pytube.io/en/latest/index.html
 
 suppport machine:
 Mac (currently), python 3.10 (3.11 conflict with Whisper)
-Window (not yet support)
+Window, python 3.10 or below

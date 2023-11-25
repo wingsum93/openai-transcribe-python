@@ -10,7 +10,7 @@ class TextTranslator:
         tokenizer = M2M100Tokenizer.from_pretrained(self.model_name)
         model = M2M100ForConditionalGeneration.from_pretrained(self.model_name)
         tokenizer.src_lang = source_language
-        translat_list_size = segments.size
+        # translat_list_size = segments.size
 
         for index,seg in enumerate(segments):
             origin_text = seg['text']
@@ -27,6 +27,6 @@ class TextTranslator:
                 self.translation_cache[origin_text] = translated_text
 
             seg['text'] = translated_text
-            print(f"Index: {index}/{translat_list_size} From: {origin_text} to {translated_text}")
+            print(f"Index: {index} From: {origin_text} to {translated_text}")
         
 

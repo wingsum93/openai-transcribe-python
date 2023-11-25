@@ -28,10 +28,10 @@ python subtitle_generator/cli.py process-many-video "temp/batch-video.txt" -m=me
 
 #### Process Multiple Japanese files with Translation
 ```
-python subtitle_generator/cli.py process-many-video "temp/batch-video.txt" -m=medium -sl=ja tl=zh -es
+python subtitle_generator/cli.py process-many-video "temp/batch-video.txt" -m=medium -sl=ja -tl=zh -es
 ```
 
 #### Process Multiple English files with Translation
 ```
-python subtitle_generator/cli.py process-many-video "temp/batch-video.txt" -m=medium -sl=en tl=zh -es
+python subtitle_generator/cli.py process-many-video "temp/batch-video.txt" -m=medium -sl=en -tl=zh -es
 ```

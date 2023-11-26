@@ -10,3 +10,4 @@ build/
 launch.json
 *.mp3
 *.srt
+result.txt

@@ -24,7 +24,6 @@ https://github.com/AssemblyAI-Examples/whisper-multilingual/blob/main/main.py
 
 ## How to run search.py?
 ```
-python3
 python util/search.py E:/ericDrive/ mkv
 ```
 doc:

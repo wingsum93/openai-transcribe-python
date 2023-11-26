@@ -22,6 +22,11 @@ https://github.com/AssemblyAI-Examples/whisper-multilingual/blob/main/main.py
 ## How to run the program?
 [Run program](doc/command.md)
 
+## How to run search.py?
+```
+python3
+python util/search.py E:/ericDrive/ mkv
+```
 doc:
 https://pypi.org/project/openai/
 pytube api doc: 

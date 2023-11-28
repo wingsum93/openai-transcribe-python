@@ -26,13 +26,15 @@ class SubtitleGenerator:
                 target_language:str, 
                 output_dir:str, 
                 output_filename=None, 
-                auto_decide_output_name=True, 
+                auto_decide_output_name=True,
+                keep_origin_subtitle=True,  
                 model_type:str='small', 
                 confident_level=0.4):
         self.audio_file_path = audio_file_path
         self.source_language = source_language
         self.target_language = target_language
         self.confident_level = confident_level
+        self.keep_origin_subtitle = keep_origin_subtitle
         self.model_type = model_type  # Add model_type as an instance attribute
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -57,12 +59,12 @@ class SubtitleGenerator:
             translator = TextTranslator()
             translated_segments = copy.deepcopy(segments)
             translator.translate(translated_segments, self.source_language, self.target_language)
-
-        
-        self.convert_to_subtitle(segments, 
-                                 self.output_dir, 
-                                 self.output_filename,
-                                 self.source_language)
+        print(f'keep_origin_subtitle {self.keep_origin_subtitle}')
+        if self.keep_origin_subtitle:
+            self.convert_to_subtitle(segments, 
+                                    self.output_dir, 
+                                    self.output_filename,
+                                    self.source_language)
         if need_translation:
             self.convert_to_subtitle(translated_segments, 
                                  self.output_dir, 

@@ -28,6 +28,7 @@ def process_youtube_video(url,config):
                                            source_language=config['source_language'],
                                            target_language=config['target_language'], 
                                            output_dir=config['output_dir'],
+                                           keep_origin_subtitle=config['keep_origin_subtitle'],
                                            model_type=config['model_type'])
     if config['enable_txt']:
         subtitle_generator.add_text_output()
@@ -47,6 +48,7 @@ def process_local_audio(config):
                                            source_language=config['source_language'],
                                            target_language=config['target_language'], 
                                            output_dir=config['output_dir'],
+                                           keep_origin_subtitle=config['keep_origin_subtitle'],
                                            model_type=config['model_type'])
     if config['enable_txt']:
         subtitle_generator.add_text_output()
@@ -65,6 +67,7 @@ def process_local_video(video_path:str,config):
                                            source_language=config['source_language'],
                                            target_language=config['target_language'], 
                                            output_dir=config['output_dir'],
+                                           keep_origin_subtitle=config['keep_origin_subtitle'],
                                            model_type=config['model_type'])
     if config['enable_txt']:
         subtitle_generator.add_text_output()
@@ -106,11 +109,14 @@ if __name__ == '__main__':
     parser.add_argument('-od','--output_dir', type=str, help='The directory of output file')
     parser.add_argument('-ofn','--output_filename', type=str, help='The filename of subtitle file')
 
-    parser.add_argument('-et','--enable_txt', action='store_false', help='Output Text file')
+    parser.add_argument('-dt','--disable_txt', action='store_false', help='Disable output Text file')
     parser.add_argument('-es','--enable_srt', action='store_true', help='Output SRT file')
     parser.add_argument('-ev','--enable_vtt', action='store_true', help='Output VTT file')
+    parser.add_argument('-dos','--disable_original_subtitle', action='store_false', help='Disable original subtitle')
 
     args = parser.parse_args()
+
+    print(f'args.disable_original_subtitle {args.disable_original_subtitle}')
     config = {
         'video_path': args.video_path,
         'model_type': args.model,
@@ -118,7 +124,8 @@ if __name__ == '__main__':
         'target_language': args.target_language,
         'output_dir': args.output_dir,
         'output_filename': args.output_filename,
-        'enable_txt': args.enable_txt,
+        'enable_txt': args.disable_txt,
+        'keep_origin_subtitle': args.disable_original_subtitle,
         'enable_srt': args.enable_srt,
         'enable_vtt': args.enable_vtt
     }

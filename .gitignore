@@ -4,6 +4,7 @@ output/
 downloads/
 sample/
 temp/
+logs/
 __pycache__/
 build/
 *env/

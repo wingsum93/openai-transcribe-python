@@ -1,12 +1,15 @@
 from transformers import M2M100ForConditionalGeneration, M2M100Tokenizer
+from logger import Logger
 
 class TextTranslator:
-    def __init__(self, model_name="facebook/m2m100_418M"):
+    def __init__(self,logger=Logger(), model_name="facebook/m2m100_418M"):
+        self.logger = logger
         self.model_name = model_name
         self.translation_cache = {}  # Initialize an empty cache
 
     # Translate multiple text lines
     def translate(self, segments, source_language, target_language):
+        self.logger.logStartAction('translate')
         tokenizer = M2M100Tokenizer.from_pretrained(self.model_name)
         model = M2M100ForConditionalGeneration.from_pretrained(self.model_name)
         tokenizer.src_lang = source_language
@@ -28,5 +31,6 @@ class TextTranslator:
 
             seg['text'] = translated_text
             print(f"Index: {index} From: {origin_text} to {translated_text}")
+        self.logger.logEndAction('translate')
         
 

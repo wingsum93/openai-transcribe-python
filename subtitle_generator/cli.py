@@ -90,9 +90,9 @@ def process_many_video(config):
     if config['video_path']:
         # 处理批量处理的逻辑
         with open(config['video_path'], 'r',encoding='utf-8') as batch_file:
-            video_paths = batch_file.readlines()
+            # 使用列表推导式读取非空行
+            video_paths = [path.strip() for path in batch_file.readlines() if path.strip()]
             for video_path in video_paths:
-                video_path = video_path.strip()  # 去除换行符和空格
                 process_local_video(video_path, config)
 
 if __name__ == '__main__':

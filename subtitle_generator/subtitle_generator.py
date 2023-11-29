@@ -7,6 +7,7 @@ import torch
 import gc
 from pathlib import Path
 from text_translator import TextTranslator
+from logger import Logger
 
 @contextmanager
 def use_whisper_model(model_type, device):
@@ -37,6 +38,7 @@ class SubtitleGenerator:
         self.keep_origin_subtitle = keep_origin_subtitle
         self.model_type = model_type  # Add model_type as an instance attribute
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        self.logger = Logger()
 
         self.output_format_list = []
         self.output_dir = Path(output_dir) if output_dir else Path("output")
@@ -73,10 +75,12 @@ class SubtitleGenerator:
         return
 
     def transcribe_audio_to_segment(self, audio_path):
+        self.logger.logStartAction('transcribe_audio_to_segment')
         # Now an instance method, not a static method
         with use_whisper_model(self.model_type, self.device) as whisper_model:
             options = whisper.DecodingOptions(fp16=False, language=self.source_language)
             result = whisper_model.transcribe(audio_path, **options.__dict__, verbose=False)
+        self.logger.logEndAction('transcribe_audio_to_segment')
         return result
 
     # Additional methods can be added here.

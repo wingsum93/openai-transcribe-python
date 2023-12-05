@@ -3,6 +3,7 @@ import argparse
 from youtube_processor import YoutubeProcessor
 from subtitle_generator import SubtitleGenerator
 from video_processor import VideoProcessor
+from facebook_processor import FacebookProcessor
 
 
 ACTION_PROCESS_VIDEO = 'process-video'
@@ -10,6 +11,7 @@ ACTION_PROCESS_MP3 = 'process-mp3'
 ACTION_PROCESS_YOUTUBE = 'process-youtube'
 ACTION_PROCESS_MANY_YOUTUBE = 'process-many-youtube'
 ACTION_PROCESS_MANY_VIDEO = 'process-many-video'
+ACTION_PROCESS_FACEBOOK = 'process-facebook'
 
 def process_youtube_video(url,config):
     video_path = url
@@ -38,7 +40,32 @@ def process_youtube_video(url,config):
         subtitle_generator.add_vtt_output()
     subtitles = subtitle_generator.generate_subtitles()
 
+def process_facebook_video(url,config):
+    video_path = url
+    print(f"v path: {video_path}")
+    # Check if the video path is a YouTube URL and download the video
+    
+    p = FacebookProcessor()
+    video = p.download_video(url=video_path)
 
+
+    # Video convert to audio
+    vp = VideoProcessor()
+    audio_path = vp.convert_video_to_audio(video,"aac")
+    # Subtitle generation
+    subtitle_generator = SubtitleGenerator(audio_file_path= audio_path,
+                                           source_language=config['source_language'],
+                                           target_language=config['target_language'], 
+                                           output_dir=config['output_dir'],
+                                           keep_origin_subtitle=config['keep_origin_subtitle'],
+                                           model_type=config['model_type'])
+    if config['enable_txt']:
+        subtitle_generator.add_text_output()
+    if config['enable_srt']:
+        subtitle_generator.add_srt_output()
+    if config['enable_vtt']:
+        subtitle_generator.add_vtt_output()
+    subtitles = subtitle_generator.generate_subtitles()
     
     
     
@@ -98,7 +125,7 @@ def process_many_video(config):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Transcribe a video using OpenAI Whisper.')
     # action
-    parser.add_argument('action', type=str, choices=[ACTION_PROCESS_VIDEO,ACTION_PROCESS_MP3,ACTION_PROCESS_YOUTUBE,ACTION_PROCESS_MANY_YOUTUBE,ACTION_PROCESS_MANY_VIDEO], help='The path to the video file or a YouTube URL.')
+    parser.add_argument('action', type=str, choices=[ACTION_PROCESS_VIDEO,ACTION_PROCESS_MP3,ACTION_PROCESS_YOUTUBE,ACTION_PROCESS_MANY_YOUTUBE,ACTION_PROCESS_FACEBOOK,ACTION_PROCESS_MANY_VIDEO], help='The path to the video file or a YouTube URL.')
 
     parser.add_argument('video_path', type=str, help='The path to the video file or a YouTube URL.')
 
@@ -134,6 +161,8 @@ if __name__ == '__main__':
         process_youtube_video(config["video_path"],config)
     elif args.action == ACTION_PROCESS_MANY_YOUTUBE:
         process_many_youtube_video(config)
+    elif args.action == ACTION_PROCESS_FACEBOOK:
+        process_facebook_video(config["video_path"],config)
     elif args.action == ACTION_PROCESS_MP3:
         process_local_audio(config)
     elif args.action == ACTION_PROCESS_VIDEO:

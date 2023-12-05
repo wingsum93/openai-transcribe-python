@@ -1,5 +1,4 @@
-import requests
-from bs4 import BeautifulSoup
+import youtube_dl
 import os
 
 class FacebookProcessor:
@@ -27,7 +26,7 @@ class FacebookProcessor:
         # if video_tag and 'src' in video_tag.attrs:
         #     return video_tag['src']
         # https://www.youtube.com/watch?v=h60-_DoKU3o
-        return None
+        return page_url
 
     def save_video(self, video_url):
         # Download the video from the video URL and save it to the download folder
@@ -38,5 +37,17 @@ class FacebookProcessor:
         #         if chunk:
         #             file.write(chunk)
         # return file.name
-        
+        try:
+            print("FB Downloading video ...")
+            if res == '1':
+                print("Downloading ...")
+                with youtube_dl.YoutubeDL({}) as y:
+                    y.download([video_url])
+                print("Download Complete!")
+
+            else:
+                print("Private video can't download in this version")
+
+        except:
+            print("FB There is an error. Please Run again")
         return None

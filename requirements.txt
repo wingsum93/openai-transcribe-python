@@ -12,6 +12,8 @@ pytube==12.0.0
 
 numpy
 matplotlib
+# download fb
+youtube-dl==2021.12.17
 
 # for testing
 behave==1.2.6

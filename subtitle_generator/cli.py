@@ -131,7 +131,7 @@ if __name__ == '__main__':
 
     # all non positional args
     parser.add_argument('-m','--model', type=str, choices=['tiny','base', 'small', 'medium','medium.en', 'large','large-v2','large-v3'], default='small', help='The type of Whisper model to use.')
-    parser.add_argument('-sl','--source_language', type=str, choices=['zh', 'en', 'ja'], required=True, help='The type of language that video use.')
+    parser.add_argument('-sl','--source_language', type=str, choices=['zh', 'en', 'ja','Auto'], required=True, help='The type of language that video use.')
     parser.add_argument('-tl','--target_language', type=str, choices=['zh', 'en', 'ja'], help='Language of video want to translate.')
     parser.add_argument('-od','--output_dir', type=str, help='The directory of output file')
     parser.add_argument('-ofn','--output_filename', type=str, help='The filename of subtitle file')

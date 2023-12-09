@@ -78,7 +78,10 @@ class SubtitleGenerator:
         self.logger.logStartAction('transcribe_audio_to_segment')
         # Now an instance method, not a static method
         with use_whisper_model(self.model_type, self.device) as whisper_model:
-            options = whisper.DecodingOptions(fp16=False, language=self.source_language)
+            if self.source_language == 'Auto':
+                options = whisper.DecodingOptions(fp16=False)
+            else:
+                options = whisper.DecodingOptions(fp16=False, language=self.source_language)
             result = whisper_model.transcribe(audio_path, **options.__dict__, verbose=False)
         self.logger.logEndAction('transcribe_audio_to_segment')
         return result

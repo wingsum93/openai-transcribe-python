@@ -24,7 +24,7 @@ def use_whisper_model(model_type,device):
         gc.collect()
 @contextmanager
 def use_m2m100_model(device):
-    model_name = "facebook/m2m100_418M"
+    model_name = "facebook/m2m100_1.2B"
     tokenizer = M2M100Tokenizer.from_pretrained(model_name)
     m2m100_model = M2M100ForConditionalGeneration.from_pretrained(model_name).to(device)
     try:

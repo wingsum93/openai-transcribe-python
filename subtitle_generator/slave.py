@@ -23,33 +23,6 @@ def process_youtube_video(url,config):
 
 
     # Video convert to audio
-    #vp = VideoProcessor()
-    #audio_path = vp.convert_video_to_audio(video,"aac")
-    # Subtitle generation
-    subtitle_generator = SubtitleGenerator(audio_file_path= video,
-                                           source_language=config['source_language'],
-                                           target_language=config['target_language'], 
-                                           output_dir=config['output_dir'],
-                                           keep_origin_subtitle=config['keep_origin_subtitle'],
-                                           model_type=config['model_type'])
-    if config['enable_txt']:
-        subtitle_generator.add_text_output()
-    if config['enable_srt']:
-        subtitle_generator.add_srt_output()
-    if config['enable_vtt']:
-        subtitle_generator.add_vtt_output()
-    subtitles = subtitle_generator.generate_subtitles()
-
-def process_facebook_video(url,config):
-    video_path = url
-    print(f"v path: {video_path}")
-    # Check if the video path is a YouTube URL and download the video
-    
-    p = FacebookProcessor()
-    video = p.download_video(url=video_path)
-
-
-    # Video convert to audio
     vp = VideoProcessor()
     audio_path = vp.convert_video_to_audio(video,"aac")
     # Subtitle generation
@@ -67,7 +40,10 @@ def process_facebook_video(url,config):
         subtitle_generator.add_vtt_output()
     subtitles = subtitle_generator.generate_subtitles()
     
-    
+    texts = [s['text'] for s in subtitles]
+    combined_text = '\n'.join(texts)
+    print('Youtube video subtitle:\n')
+    print(combined_text)
     
 def process_local_audio(config):
     # Subtitle generation
@@ -104,23 +80,6 @@ def process_local_video(video_path:str,config):
         subtitle_generator.add_vtt_output()
     subtitles = subtitle_generator.generate_subtitles()
 
-def process_many_youtube_video(config):
-
-    if config['video_path']:
-        # 处理批量处理的逻辑
-        with open(config['video_path'], 'r',encoding='utf-8') as batch_file:
-            youtube_urls = batch_file.readlines()
-            for url in youtube_urls:
-                url = url.strip()  # 去除换行符和空格
-                process_youtube_video(url, config)
-def process_many_video(config):
-    if config['video_path']:
-        # 处理批量处理的逻辑
-        with open(config['video_path'], 'r',encoding='utf-8') as batch_file:
-            # 使用列表推导式读取非空行
-            video_paths = [path.strip() for path in batch_file.readlines() if path.strip()]
-            for video_path in video_paths:
-                process_local_video(video_path, config)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Transcribe a video using OpenAI Whisper.')

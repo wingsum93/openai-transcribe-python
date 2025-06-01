@@ -72,7 +72,7 @@ class SubtitleGenerator:
                                  self.output_dir, 
                                  self.output_filename,
                                  self.target_language)
-        return
+        return segments
 
     def transcribe_audio_to_segment(self, audio_path):
         self.logger.logStartAction('transcribe_audio_to_segment')

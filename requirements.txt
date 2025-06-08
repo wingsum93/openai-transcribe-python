@@ -18,3 +18,5 @@ youtube-dl==2021.12.17
 # for testing
 behave==1.2.6
 requests>=2.24.1
+pytest>=8.4.0
+pytest-mock>=3.14.1

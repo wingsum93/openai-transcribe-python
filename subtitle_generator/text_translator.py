@@ -1,5 +1,5 @@
 from transformers import M2M100ForConditionalGeneration, M2M100Tokenizer
-from logger import Logger
+from .logger import Logger
 
 class TextTranslator:
     def __init__(self,logger=Logger(), model_name="facebook/m2m100_418M"):

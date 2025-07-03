@@ -1,6 +1,6 @@
 #from pytube import YouTube
 #from pytube.exceptions import PytubeError
-from logger import Logger
+from .logger import Logger
 from pytubefix import YouTube
 from pytubefix.cli import on_progress
 import os

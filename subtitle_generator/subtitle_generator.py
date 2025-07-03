@@ -6,8 +6,8 @@ import whisper
 import torch
 import gc
 from pathlib import Path
-from text_translator import TextTranslator
-from logger import Logger
+from .text_translator import TextTranslator
+from .logger import Logger
 
 @contextmanager
 def use_whisper_model(model_type, device):

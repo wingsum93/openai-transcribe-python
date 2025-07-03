@@ -5,7 +5,7 @@ transformers
 sentencepiece 
 tqdm
 webvtt-py
-python-touch>=0.1
+python-touch>=0.1.2
 touch
 ffmpeg-python==0.2.0
 pytubefix>=9.1.1
@@ -14,9 +14,11 @@ numpy
 matplotlib
 # download fb
 youtube-dl==2021.12.17
+click>=7.1.2
+
 
 # for testing
 behave==1.2.6
-requests>=2.24.1
+requests>=2.31.0
 pytest>=8.4.0
 pytest-mock>=3.14.1

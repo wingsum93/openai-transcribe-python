@@ -7,12 +7,12 @@ def read_requirements():
 
 setup(
     name='subtitle_generator',
-    version='0.0.1',
+    version='0.0.2',
     packages=find_packages(exclude=['tests', 'tests.*']),
     install_requires=read_requirements(),
     entry_points={
         'console_scripts': [
-            'stt=subtitle_generator.cli:main',
+            'stt=subtitle_generator.cli_main:cli'
         ],
     },
     author='Eric Ho',

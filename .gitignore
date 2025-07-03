@@ -8,7 +8,6 @@ __pycache__/
 build/
 *env/
 launch.json
-*.mp3
 *.srt
 result.txt
 

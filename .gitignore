@@ -2,7 +2,6 @@
 openai-key.properties
 output/
 downloads/
-sample/
 temp/
 logs/
 __pycache__/

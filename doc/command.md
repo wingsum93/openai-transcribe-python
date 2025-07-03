@@ -35,3 +35,7 @@ python subtitle_generator/cli.py process-many-video "temp/batch-video.txt" -m=me
 ```sh
 python subtitle_generator/cli.py process-many-video "temp/batch-video.txt" -m=medium -sl=en -tl=zh -es
 ```
+
+```sh
+stt transcribe local --file sample.mp4 --source zh --target en --model medium --srt --txt
+```

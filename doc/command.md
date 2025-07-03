@@ -51,3 +51,28 @@ stt transcribe youtube \
   --model medium \
   --srt --txt --output-dir output
 ```
+
+```sh
+stt transcribe-batch-youtube \
+  --file sample/youtube_list_en.txt \
+  --source en \
+  --target zh \
+  --model medium \
+  --srt --txt
+```
+```sh
+stt transcribe-many \
+  --file sample/mixed_files_en.txt \
+  --source en \
+  --target zh \
+  --model medium \
+  --srt --txt --output-dir output
+```
+
+```sh
+stt transcribe facebook \
+  --url "https://www.facebook.com/watch?v=713982367710051" \
+  --source zh \
+  --model medium \
+  --txt
+```

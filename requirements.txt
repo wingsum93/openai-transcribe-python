@@ -15,7 +15,7 @@ matplotlib
 # download fb
 youtube-dl==2021.12.17
 click>=7.1.2
-
+yt-dlp>=2023.3.4
 
 # for testing
 behave==1.2.6

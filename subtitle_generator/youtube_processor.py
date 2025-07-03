@@ -1,8 +1,7 @@
 #from pytube import YouTube
 #from pytube.exceptions import PytubeError
 from .logger import Logger
-from pytubefix import YouTube
-from pytubefix.cli import on_progress
+import yt_dlp
 import os
 import json
 
@@ -11,22 +10,47 @@ class YoutubeProcessor:
         print(f"download folder: {download_folder}")
         self.download_folder = download_folder
         self.logger = logger
-        if not os.path.exists(download_folder):
-            os.makedirs(download_folder)
+        os.makedirs(download_folder, exist_ok=True)
 
-    def download_video(self, url):
+    def download_video(self, url) -> str:
+        """
+        Downloads the best audio stream from a YouTube video.
+
+        Args:
+            url: YouTube video URL
+
+        Returns:
+            Path to the downloaded audio file (e.g., .m4a)
+
+        Raises:
+            RuntimeError if the download fails
+        """
+        self.logger.logStartAction(f"Download YouTube Audio: {url}")
+
         try:
-            self.logger.logStartAction('download yt')
-            yt = YouTube(url, on_progress_callback=on_progress)
-            print(yt.title)
-            ys = yt.streams.get_audio_only()
-            file_path = ys.download(
-                output_path=self.download_folder,
-                filename_prefix='audio_'
-            )
-            self.logger.logEndAction('download yt')
-            return file_path
-        
+            ydl_opts = {
+                'format': 'bestaudio/best',
+                'outtmpl': os.path.join(self.download_folder, 'yt_%(id)s.%(ext)s'),
+                'quiet': False,
+                'noplaylist': True,
+                'merge_output_format': 'm4a',
+                'postprocessors': [
+                    {
+                        'key': 'FFmpegExtractAudio',
+                        'preferredcodec': 'm4a',
+                        'preferredquality': '192',
+                    }
+                ]
+            }
+
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                info = ydl.extract_info(url, download=True)
+                base = ydl.prepare_filename(info)
+                audio_path = os.path.splitext(base)[0] + ".m4a"
+
+            self.logger.logEndAction(f"Download YouTube Audio: {url}")
+            return audio_path
+
         except Exception as e:
-            print(f"An error occurred: {e}")
-            return None
+            self.logger.addLog(f"❌ Failed to download YouTube audio: {url} | Error: {e}")
+            raise RuntimeError(f"Failed to download YouTube audio: {e}")

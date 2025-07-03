@@ -4,6 +4,7 @@ from subtitle_generator.util.search import list_files_with_extension
 from subtitle_generator.util.count_file_number import list_video_files_recursive
 from subtitle_generator.youtube_processor import YoutubeProcessor
 from subtitle_generator.video_processor import VideoProcessor
+from subtitle_generator.facebook_processor import FacebookProcessor
 import os
 
 @click.group()
@@ -40,6 +41,34 @@ def transcribe_local(file, source, target, model, srt, vtt, txt, output_dir):
     }
 
     run_transcription("local", config)
+
+@cli.command("transcribe-many")
+@click.option("--file", required=True, type=click.Path(exists=True), help="Path to a .txt file with video/audio paths (one per line)")
+@click.option("--source", "-sl", required=True, type=click.Choice(["zh", "en", "ja", "Auto"]))
+@click.option("--target", "-tl", type=click.Choice(["zh", "en", "ja"]))
+@click.option("--model", "-m", default="small", type=click.Choice([
+    "tiny", "base", "small", "medium", "medium.en", "large", "large-v2", "large-v3"
+]))
+@click.option("--srt", is_flag=True)
+@click.option("--vtt", is_flag=True)
+@click.option("--txt", is_flag=True)
+@click.option("--output-dir", default="output")
+@click.option("--no-skip", is_flag=True, help="Do not skip files with existing outputs")
+def transcribe_many(file, source, target, model, srt, vtt, txt, output_dir, no_skip):
+    """Transcribe multiple local video/audio files"""
+
+    config = {
+        "source_language": source,
+        "target_language": target,
+        "model_type": model,
+        "enable_txt": txt,
+        "enable_srt": srt,
+        "enable_vtt": vtt,
+        "output_dir": output_dir,
+        "keep_origin_subtitle": True,
+    }
+
+    run_transcription_batch("local", file, config, skip_existing=not no_skip)
 
 @transcribe.command("youtube")
 @click.option("--url", required=True, help="YouTube video URL")
@@ -100,7 +129,47 @@ def transcribe_batch_youtube(file, source, target, model, srt, vtt, txt, output_
         shared_config=shared_config,
         skip_existing=not no_skip,
     )
-            
+          
+@transcribe.command("facebook")
+@click.option("--url", required=True, help="Facebook video URL (public)")
+@click.option("--source", "-sl", required=True, type=click.Choice(["zh", "en", "ja", "Auto"]), help="Source language")
+@click.option("--target", "-tl", type=click.Choice(["zh", "en", "ja"]), help="Target translation language")
+@click.option("--model", "-m", default="small", type=click.Choice([
+    "tiny", "base", "small", "medium", "medium.en", "large", "large-v2", "large-v3"
+]), help="Whisper model type")
+@click.option("--srt", is_flag=True, help="Generate .srt subtitle")
+@click.option("--vtt", is_flag=True, help="Generate .vtt subtitle")
+@click.option("--txt", is_flag=True, help="Generate .txt transcription")
+@click.option("--output-dir", default="output", help="Directory to save subtitle files")
+@click.option("--no-skip", is_flag=True, help="Do not skip if files already exist")
+def transcribe_facebook(url, source, target, model, srt, vtt, txt, output_dir, no_skip):
+    """Transcribe a Facebook video to subtitles"""
+    # Download the Facebook video
+    fb = FacebookProcessor()
+    try:
+        video_path = fb.download_video(url)
+    except Exception as e:
+        print(f"❌ Error downloading Facebook video: {e}")
+        return
+
+    # Prepare config
+    config = {
+        "video_path": video_path,
+        "source_language": source,
+        "target_language": target,
+        "model_type": model,
+        "enable_txt": txt,
+        "enable_srt": srt,
+        "enable_vtt": vtt,
+        "output_dir": output_dir,
+        "keep_origin_subtitle": True,
+    }
+
+    try:
+        run_transcription("local", config)
+    except Exception as e:
+        print(f"❌ Failed to transcribe: {e}")
+  
             
 def run_transcription_batch(
     source_type: str,

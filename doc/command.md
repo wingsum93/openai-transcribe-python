@@ -39,3 +39,15 @@ python subtitle_generator/cli.py process-many-video "temp/batch-video.txt" -m=me
 ```sh
 stt transcribe local --file sample.mp4 --source zh --target en --model medium --srt --txt
 ```
+
+```sh
+stt transcribe local --file sample/canton_long.mp3 --source zh --srt --txt --model medium
+```
+
+```sh
+stt transcribe youtube \
+  --url "https://youtu.be/UhawpafTXSU?si=rpRxu_fkqtpdNtkx" \
+  --source ja --target zh \
+  --model medium \
+  --srt --txt --output-dir output
+```

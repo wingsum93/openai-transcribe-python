@@ -1,7 +1,10 @@
 import click
 from subtitle_generator.processor import run_transcription
-from util.search import list_files_with_extension
-from util.count_file_number import list_video_files_recursive
+from subtitle_generator.util.search import list_files_with_extension
+from subtitle_generator.util.count_file_number import list_video_files_recursive
+from subtitle_generator.youtube_processor import YoutubeProcessor
+from subtitle_generator.video_processor import VideoProcessor
+import os
 
 @click.group()
 def cli():
@@ -35,8 +38,133 @@ def transcribe_local(file, source, target, model, srt, vtt, txt, output_dir):
         "output_dir": output_dir,
         "keep_origin_subtitle": True,
     }
+
     run_transcription("local", config)
 
+@transcribe.command("youtube")
+@click.option("--url", required=True, help="YouTube video URL")
+@click.option("--source", "-sl", required=True, type=click.Choice(["zh", "en", "ja", "Auto"]), help="Source language")
+@click.option("--target", "-tl", type=click.Choice(["zh", "en", "ja"]), help="Target translation language")
+@click.option("--model", "-m", default="small", type=click.Choice(["tiny","base","small","medium","medium.en","large","large-v2","large-v3"]), help="Whisper model type")
+@click.option("--srt", is_flag=True, help="Generate .srt subtitle")
+@click.option("--vtt", is_flag=True, help="Generate .vtt subtitle")
+@click.option("--txt", is_flag=True, help="Generate .txt transcription")
+@click.option("--output-dir", default="output", help="Directory to save subtitle files")
+def transcribe_youtube(url, source, target, model, srt, vtt, txt, output_dir):
+    """Transcribe audio from a YouTube URL"""
+    
+    config = {
+        "video_path": url,
+        "source_language": source,
+        "target_language": target,
+        "model_type": model,
+        "enable_txt": txt,
+        "enable_srt": srt,
+        "enable_vtt": vtt,
+        "output_dir": output_dir,
+        "keep_origin_subtitle": True,
+    }
+    run_transcription("youtube", config)
+
+
+@cli.command("transcribe-batch-youtube")
+@click.option("--file", required=True, type=click.Path(exists=True))
+@click.option("--source", "-sl", required=True, type=click.Choice(["zh", "en", "ja", "Auto"]))
+@click.option("--target", "-tl", type=click.Choice(["zh", "en", "ja"]))
+@click.option("--model", "-m", default="small", type=click.Choice(["tiny","base","small","medium","medium.en","large","large-v2","large-v3"]), help="Whisper model type")
+@click.option("--srt", is_flag=True)
+@click.option("--vtt", is_flag=True)
+@click.option("--txt", is_flag=True)
+@click.option("--output-dir", default="output")
+@click.option("--no-skip", is_flag=True, help="Do not skip existing files")
+def transcribe_batch_youtube(file, source, target, model, srt, vtt, txt, output_dir, no_skip):
+    if not os.path.exists(file):
+        raise FileNotFoundError(f"Input list file does not exist: {file}")
+
+    with open(file, "r", encoding="utf-8") as f:
+        entries = [line.strip() for line in f if line.strip()]
+
+    shared_config = {
+        "source_language": source,
+        "target_language": target,
+        "model_type": model,
+        "enable_txt": txt,
+        "enable_srt": srt,
+        "enable_vtt": vtt,
+        "output_dir": output_dir,
+        "keep_origin_subtitle": True,
+    }
+    run_transcription_batch(
+        source_type="youtube",
+        list_file_path=file,
+        shared_config=shared_config,
+        skip_existing=not no_skip,
+    )
+            
+            
+def run_transcription_batch(
+    source_type: str,
+    list_file_path: str,
+    shared_config: dict,
+    skip_existing: bool = True,
+):
+    """
+    Process a batch of video/audio sources listed in a file.
+
+    Args:
+        source_type: "youtube" or "local"
+        list_file_path: path to the .txt file containing URLs or file paths (one per line)
+        shared_config: common config for all items, e.g.:
+            {
+                "source_language": "zh",
+                "target_language": "en",
+                "model_type": "medium",
+                "output_dir": "output",
+                "enable_txt": True,
+                "enable_srt": True,
+                "enable_vtt": False,
+                "keep_origin_subtitle": True
+            }
+        skip_existing: if True, skip transcription if output files already exist
+    """
+    if not os.path.exists(list_file_path):
+        raise FileNotFoundError(f"Input list file does not exist: {list_file_path}")
+
+    with open(list_file_path, "r", encoding="utf-8") as f:
+        entries = [line.strip() for line in f if line.strip()]
+
+    for idx, entry in enumerate(entries):
+        print(f"\n▶️ [{idx+1}/{len(entries)}] Processing: {entry}")
+
+        try:
+            # Determine output base name
+            base_name = os.path.splitext(os.path.basename(entry))[0]
+            suffix = shared_config.get("target_language") or shared_config["source_language"]
+            output_dir = shared_config.get("output_dir", "output")
+
+            expected_outputs = []
+            if shared_config.get("enable_txt"):
+                expected_outputs.append(f"{base_name}-{suffix}.txt")
+            if shared_config.get("enable_srt"):
+                expected_outputs.append(f"{base_name}-{suffix}.srt")
+            if shared_config.get("enable_vtt"):
+                expected_outputs.append(f"{base_name}-{suffix}.vtt")
+
+            outputs_exist = all(os.path.exists(os.path.join(output_dir, fname)) for fname in expected_outputs)
+
+            if skip_existing and outputs_exist:
+                print(f"✅ Skipping (already done): {base_name}")
+                continue
+
+            config = {
+                **shared_config,
+                "video_path": entry
+            }
+
+            run_transcription(source_type, config)
+
+        except Exception as e:
+            print(f"❌ Error processing {entry}: {e}")
 @cli.group()
 def utils():
     """Utility tools"""

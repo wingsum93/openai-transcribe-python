@@ -5,6 +5,8 @@ from subtitle_generator.util.count_file_number import list_video_files_recursive
 from subtitle_generator.youtube_processor import YoutubeProcessor
 from subtitle_generator.video_processor import VideoProcessor
 from subtitle_generator.facebook_processor import FacebookProcessor
+from subtitle_generator.recorder import record_until_end
+import datetime
 import os
 
 @click.group()
@@ -169,7 +171,37 @@ def transcribe_facebook(url, source, target, model, srt, vtt, txt, output_dir, n
         run_transcription("local", config)
     except Exception as e:
         print(f"❌ Failed to transcribe: {e}")
-  
+
+@cli.command("record")
+@click.option("--source", "-sl", required=True, type=click.Choice(["zh", "en", "ja", "Auto"]))
+@click.option("--target", "-tl", type=click.Choice(["zh", "en", "ja"]))
+@click.option("--model", "-m", default="small", type=click.Choice([
+    "tiny", "base", "small", "medium", "medium.en", "large", "large-v2", "large-v3"
+]))
+@click.option("--srt", is_flag=True)
+@click.option("--vtt", is_flag=True)
+@click.option("--txt", is_flag=True)
+@click.option("--output-dir", default="output")
+def record(source, target, model, srt, vtt, txt, output_dir):
+    """🎤 錄音直到輸入 'end'，並轉錄成字幕 / 文字檔"""
+    
+    now = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    audio_path = os.path.join("recordings", f"recording_{now}.wav")
+    record_until_end(audio_path)
+
+    config = {
+        "video_path": audio_path,
+        "source_language": source,
+        "target_language": target,
+        "model_type": model,
+        "enable_txt": txt,
+        "enable_srt": srt,
+        "enable_vtt": vtt,
+        "output_dir": output_dir,
+        "keep_origin_subtitle": True,
+    }
+
+    run_transcription("local", config)
             
 def run_transcription_batch(
     source_type: str,

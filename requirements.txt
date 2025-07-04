@@ -13,9 +13,11 @@ pytubefix>=9.1.1
 numpy
 matplotlib
 # download fb
-youtube-dl==2021.12.17
 click>=7.1.2
 yt-dlp>=2023.3.4
+# voice input
+sounddevice
+scipy
 
 # for testing
 behave==1.2.6

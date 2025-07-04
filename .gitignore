@@ -1,14 +1,16 @@
-.venv
 openai-key.properties
+## folders
 output/
 downloads/
 temp/
+.venv/
+recordings/
 logs/
 __pycache__/
 build/
-*env/
+*.egg-info/
+
+*.env
 launch.json
 *.srt
 result.txt
-
-*.egg-info/

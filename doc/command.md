@@ -76,3 +76,8 @@ stt transcribe facebook \
   --model medium \
   --txt
 ```
+
+Record my voice 
+```sh
+stt record --source zh --target en --model medium --txt --srt
+```

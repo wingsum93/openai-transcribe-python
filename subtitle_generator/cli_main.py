@@ -26,16 +26,15 @@ def transcribe():
 @click.option("--model", "-m", default="small", type=click.Choice(["tiny","base","small","medium","medium.en","large","large-v2","large-v3"]), help="Whisper model type")
 @click.option("--srt", is_flag=True, help="Generate .srt subtitle")
 @click.option("--vtt", is_flag=True, help="Generate .vtt subtitle")
-@click.option("--txt", is_flag=True, help="Generate .txt transcription")
 @click.option("--output-dir", default="output", help="Directory to save subtitle files")
-def transcribe_local(file, source, target, model, srt, vtt, txt, output_dir):
+def transcribe_local(file, source, target, model, srt, vtt, output_dir):
     """Transcribe local video/audio file"""
     config = {
         "video_path": file,
         "source_language": source,
         "target_language": target,
         "model_type": model,
-        "enable_txt": txt,
+        "enable_txt": True,
         "enable_srt": srt,
         "enable_vtt": vtt,
         "output_dir": output_dir,
@@ -53,17 +52,16 @@ def transcribe_local(file, source, target, model, srt, vtt, txt, output_dir):
 ]))
 @click.option("--srt", is_flag=True)
 @click.option("--vtt", is_flag=True)
-@click.option("--txt", is_flag=True)
 @click.option("--output-dir", default="output")
 @click.option("--no-skip", is_flag=True, help="Do not skip files with existing outputs")
-def transcribe_many(file, source, target, model, srt, vtt, txt, output_dir, no_skip):
+def transcribe_many(file, source, target, model, srt, vtt, output_dir, no_skip):
     """Transcribe multiple local video/audio files"""
 
     config = {
         "source_language": source,
         "target_language": target,
         "model_type": model,
-        "enable_txt": txt,
+        "enable_txt": True,
         "enable_srt": srt,
         "enable_vtt": vtt,
         "output_dir": output_dir,
@@ -79,9 +77,8 @@ def transcribe_many(file, source, target, model, srt, vtt, txt, output_dir, no_s
 @click.option("--model", "-m", default="small", type=click.Choice(["tiny","base","small","medium","medium.en","large","large-v2","large-v3"]), help="Whisper model type")
 @click.option("--srt", is_flag=True, help="Generate .srt subtitle")
 @click.option("--vtt", is_flag=True, help="Generate .vtt subtitle")
-@click.option("--txt", is_flag=True, help="Generate .txt transcription")
 @click.option("--output-dir", default="output", help="Directory to save subtitle files")
-def transcribe_youtube(url, source, target, model, srt, vtt, txt, output_dir):
+def transcribe_youtube(url, source, target, model, srt, vtt, output_dir):
     """Transcribe audio from a YouTube URL"""
     
     config = {
@@ -89,7 +86,7 @@ def transcribe_youtube(url, source, target, model, srt, vtt, txt, output_dir):
         "source_language": source,
         "target_language": target,
         "model_type": model,
-        "enable_txt": txt,
+        "enable_txt": True,
         "enable_srt": srt,
         "enable_vtt": vtt,
         "output_dir": output_dir,
@@ -105,10 +102,9 @@ def transcribe_youtube(url, source, target, model, srt, vtt, txt, output_dir):
 @click.option("--model", "-m", default="small", type=click.Choice(["tiny","base","small","medium","medium.en","large","large-v2","large-v3"]), help="Whisper model type")
 @click.option("--srt", is_flag=True)
 @click.option("--vtt", is_flag=True)
-@click.option("--txt", is_flag=True)
 @click.option("--output-dir", default="output")
 @click.option("--no-skip", is_flag=True, help="Do not skip existing files")
-def transcribe_batch_youtube(file, source, target, model, srt, vtt, txt, output_dir, no_skip):
+def transcribe_batch_youtube(file, source, target, model, srt, vtt, output_dir, no_skip):
     if not os.path.exists(file):
         raise FileNotFoundError(f"Input list file does not exist: {file}")
 
@@ -119,7 +115,7 @@ def transcribe_batch_youtube(file, source, target, model, srt, vtt, txt, output_
         "source_language": source,
         "target_language": target,
         "model_type": model,
-        "enable_txt": txt,
+        "enable_txt": True,
         "enable_srt": srt,
         "enable_vtt": vtt,
         "output_dir": output_dir,
@@ -141,10 +137,9 @@ def transcribe_batch_youtube(file, source, target, model, srt, vtt, txt, output_
 ]), help="Whisper model type")
 @click.option("--srt", is_flag=True, help="Generate .srt subtitle")
 @click.option("--vtt", is_flag=True, help="Generate .vtt subtitle")
-@click.option("--txt", is_flag=True, help="Generate .txt transcription")
 @click.option("--output-dir", default="output", help="Directory to save subtitle files")
 @click.option("--no-skip", is_flag=True, help="Do not skip if files already exist")
-def transcribe_facebook(url, source, target, model, srt, vtt, txt, output_dir, no_skip):
+def transcribe_facebook(url, source, target, model, srt, vtt, output_dir, no_skip):
     """Transcribe a Facebook video to subtitles"""
     # Download the Facebook video
     fb = FacebookProcessor()
@@ -160,7 +155,7 @@ def transcribe_facebook(url, source, target, model, srt, vtt, txt, output_dir, n
         "source_language": source,
         "target_language": target,
         "model_type": model,
-        "enable_txt": txt,
+        "enable_txt": True,
         "enable_srt": srt,
         "enable_vtt": vtt,
         "output_dir": output_dir,
@@ -180,9 +175,8 @@ def transcribe_facebook(url, source, target, model, srt, vtt, txt, output_dir, n
 ]))
 @click.option("--srt", is_flag=True)
 @click.option("--vtt", is_flag=True)
-@click.option("--txt", is_flag=True)
 @click.option("--output-dir", default="output")
-def record(source, target, model, srt, vtt, txt, output_dir):
+def record(source, target, model, srt, vtt, output_dir):
     """🎤 錄音直到輸入 'end'，並轉錄成字幕 / 文字檔"""
     
     now = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -194,7 +188,7 @@ def record(source, target, model, srt, vtt, txt, output_dir):
         "source_language": source,
         "target_language": target,
         "model_type": model,
-        "enable_txt": txt,
+        "enable_txt": True,
         "enable_srt": srt,
         "enable_vtt": vtt,
         "output_dir": output_dir,

@@ -44,5 +44,5 @@ def record_until_end(filename: str, samplerate=16000, channels=1):
     audio_array = np.concatenate(frames, axis=0)
     wav.write(filename, samplerate, audio_array)
 
-    print(f"✅ 錄音完成，儲存為：{filename}")
+    print(f"✅ 錄音完成，儲存為： {filename}")
     return filename

@@ -10,10 +10,10 @@ class VideoProcessor:
         self.logger = logger
 
     def convert_video_to_audio(self, video_path:str, audio_format="aac")-> str:
-        print(f"🎞️ 轉換影片或音訊檔案：{video_path}")
+        print(f"🎞️ 轉換影片或音訊檔案： {video_path}")
         
         if not os.path.exists(video_path):
-            raise FileNotFoundError(f"搵唔到檔案：{video_path}")
+            raise FileNotFoundError(f"搵唔到檔案： {video_path}")
 
         # ✅ Already supported by Whisper? No conversion needed
         supported_exts = [".aac", ".m4a", ".wav"]
